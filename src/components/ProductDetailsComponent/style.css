@@ -1,0 +1,15 @@
+/* ProductDetailsComponent.css */
+.ant-input-number-handler-wrap {
+  display: none !important;
+}
+
+.custom-button {
+  height: 32px; /* Adjust the height to match the InputNumber component */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-input-number {
+  vertical-align: middle; /* Align the input number with buttons */
+}

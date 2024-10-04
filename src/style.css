@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.line-clamp-3 {
+  display: -webkit-box;  /* Chrome, Safari, Opera */
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+
+  /* Optional: add these for other vendor prefixes, even though they're not widely supported */
+  display: -moz-box;     /* Firefox (not widely supported) */
+  display: -ms-flexbox;  /* Internet Explorer 10 */
+  display: -webkit-flex; /* Chrome, Safari, Opera */
+  display: flex;         /* Standard (not widely supported for line-clamp) */
+  
+  box-orient: vertical;  /* Non-standard */
+  line-clamp: 3;         /* Non-standard */
+  
+  /* Flexbox direction for older versions */
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
