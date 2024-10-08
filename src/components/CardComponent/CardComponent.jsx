@@ -3,6 +3,7 @@
 import { Card } from "antd";
 import official from "../../assets/images/official.png";
 import { useNavigate } from "react-router-dom";
+import { convertPrice } from "../../utils";
 
 export const CardComponent = (props) => {
   const {
@@ -30,7 +31,7 @@ export const CardComponent = (props) => {
         className="relative hidden min-[770px]:block"
         hoverable
         style={{
-          width: 250,
+          width: 230,
           height: 400,
         }}
         cover={
@@ -61,8 +62,9 @@ export const CardComponent = (props) => {
         </div>
 
         <div className="flex items-center">
-          <span className="font-bold text-lg text-red-500">{price.toLocaleString()} đ </span>
-          <span className="text-red-500"> -{discount || 5}%</span>
+          <span className="font-bold text-lg text-red-500">{convertPrice(price - (price*(discount/100)))} </span>
+          
+          {discount > 0 && <span className="text-red-500"> -{discount}% </span>}
         </div>
       </Card>
       <Card

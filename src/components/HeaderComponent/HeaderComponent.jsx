@@ -150,7 +150,7 @@ export const HeaderComponent = ({
               {!isHiddenCart && (
                 <div onClick={() => navigate('/order')} className="cursor-pointer xl:px-5 flex ">
                   <Badge
-                    count={order?.orderItem.length}
+                    count={order?.orderItems?.length}
                     size="small"
                     className="flex justify-start items-center"
                   >

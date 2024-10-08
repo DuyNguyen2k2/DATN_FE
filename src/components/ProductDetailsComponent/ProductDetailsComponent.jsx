@@ -13,6 +13,7 @@ import './style.css'; // Ensure this is included
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { addOrderProduct } from "../../redux/slices/orderSlice";
+import { convertPrice } from "../../utils";
 
 export const ProductDetailsComponent = ({ idProduct }) => {
   const navigate = useNavigate()
@@ -32,6 +33,8 @@ export const ProductDetailsComponent = ({ idProduct }) => {
     fetchGetData,
     { enabled: !!idProduct }
   );
+
+  // console.log('productDetails', productDetails)
 
   const [numProducts, setNumProducts] = useState(1);
   const user = useSelector((state) => state.user)
@@ -55,7 +58,6 @@ export const ProductDetailsComponent = ({ idProduct }) => {
       return newValue;
     });
   };
-
   const handleAddOrderProduct = () => {
     if(!user?.id) {
       navigate('/sign-in', {state: location?.pathname})
@@ -115,7 +117,7 @@ export const ProductDetailsComponent = ({ idProduct }) => {
                     <span>Đã bán 34</span>
                   </div>
                   <div className="bg-[#FAFAFA] rounded font-bold text-2xl p-3 mt-5">
-                    <p>{productDetails.price.toLocaleString()} đ</p>
+                    <p>{convertPrice(productDetails?.price)} </p>
                   </div>
                   <div className="text-md border-t mt-5">
                     <div className="mt-3">

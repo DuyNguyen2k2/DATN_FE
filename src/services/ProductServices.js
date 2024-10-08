@@ -13,6 +13,17 @@ export const getAllProducts = async (search, limit) => {
   return res.data;
 };
 
+// export const getAllProducts = async (search = "", limit = 10, page = 1) => {
+//   const offset = (page - 1) * limit; // Tính toán vị trí bắt đầu
+//   const url = search?.length > 0 
+//     ? `${BE_URL}/product/getAll?filter=name&filter=${search}&limit=${limit}&offset=${offset}`
+//     : `${BE_URL}/product/getAll?limit=${limit}&offset=${offset}`;
+
+//   const res = await axios.get(url);
+//   return res.data;
+// };
+
+
 export const getProductsType = async (type, page, limit) => {
     if(type){
       const url =  `${BE_URL}/product/getAll?filter=type&filter=${type}&limit=${limit}&page=${page}` 

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Col, Pagination, Row } from "antd";
+import { Breadcrumb, Col, Pagination, Row } from "antd";
 import { CardComponent } from "../../components/CardComponent/CardComponent";
 import { NavBarComponent } from "../../components/NavBarComponent/NavBarComponent";
 import { useLocation } from "react-router-dom";
@@ -8,6 +8,9 @@ import { useEffect, useState } from "react";
 import { Loading } from "../../components/LoadingComponent/Loading";
 import { useSelector } from "react-redux";
 import { useDebounce } from "../../hooks/useDebounce";
+import {
+  HomeOutlined,
+} from "@ant-design/icons";
 
 
 export const TypeProductPage = () => {
@@ -48,12 +51,23 @@ export const TypeProductPage = () => {
     <Loading isLoading={loading}>
     <div className="container-2xl bg-[#efefef]">
       <div className="container mx-auto">
+        <div className="pt-3 pb-2 w-full truncate">
+            <Breadcrumb
+              items={[
+                {
+                  href: "/",
+                  title: <HomeOutlined />,
+                },
+                
+              ]}
+            />
+          </div>
         <Row>
-          <Col span={4} className="bg-[#fff] p-3 rounded my-5 h-max">
+          <Col span={4} className="bg-[#fff] rounded h-max p-3 mb-5">
             <NavBarComponent />
           </Col>
           <Col span={20}>
-            <div className=" p-3 rounded flex items-center flex-wrap gap-2 my-5">
+            <div className="px-3 rounded flex items-center flex-wrap gap-3 mb-5">
               {products?.filter((product) => {
                 if(searchDebounce === ''){
                   return product

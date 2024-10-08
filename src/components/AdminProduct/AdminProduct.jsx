@@ -13,7 +13,7 @@ import {
   SearchOutlined,
   StarOutlined,
 } from "@ant-design/icons";
-import { getBase64, renderOptions } from "../../utils";
+import { convertPrice, getBase64, renderOptions } from "../../utils";
 import * as ProductServices from "../../services/ProductServices";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import { Loading } from "../LoadingComponent/Loading";
@@ -30,6 +30,11 @@ export const AdminProduct = () => {
   const [isShowModalDelete, setIsShowModalDelete] = useState(false);
   const user = useSelector((state) => state?.user);
   const [form] = useForm();
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10); // Kích thước trang mặc định
+
+  
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -511,7 +516,7 @@ export const AdminProduct = () => {
       key: "price",
       width: 150,
       sorter: (a, b) => a.price - b.price,
-      render: (text) => formatPrice(text),
+      render: (text) => convertPrice(text),
       filters: [
         { text: "Dưới 50.000đ", value: "under50k" },
         { text: "50.000đ - 150.000đ", value: "50k-150k" },
@@ -604,10 +609,10 @@ export const AdminProduct = () => {
     },
   ];
 
-  const dataSource = products?.data.map((product, index) => ({
+  const dataSource = products?.data.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((product, index) => ({
     ...product,
     key: product._id,
-    index: index + 1,
+    index: index + 1 + (currentPage - 1) * pageSize, // Cập nhật chỉ số cho đúng
   }));
 
   const fetchAllType = async () => {
@@ -622,7 +627,7 @@ export const AdminProduct = () => {
 
   const [typeSelect, setTypeSelect] = useState([]);
   const handleChangeSelected = (value) => {
-    console.log("value", value);
+    
 
     setStateProduct({
       ...stateProduct,
@@ -630,7 +635,7 @@ export const AdminProduct = () => {
     });
   };
 
-  console.log("value", stateProduct);
+
 
   return (
     <div>
@@ -906,6 +911,15 @@ export const AdminProduct = () => {
         <TableComponent
           columns={columns}
           dataTable={dataSource}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: products?.data.length, // Tổng số sản phẩm
+            onChange: (page, size) => {
+              setCurrentPage(page);
+              setPageSize(size);
+            },
+          }}
           isLoading={isLoadingProduct}
           handleOkDeleteMany={handleOkDeleteManyProducts}
           titleDeleteMany="Xóa nhiều sản phẩm"
