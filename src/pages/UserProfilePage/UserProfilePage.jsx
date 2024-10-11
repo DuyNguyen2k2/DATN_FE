@@ -27,6 +27,9 @@ export const UserProfilePage = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("")
+  const [district, setDictrict] = useState("")
+  const [commune, setCommune] = useState("")
   const [avatar, setAvatar] = useState("");
 
   useEffect(() => {
@@ -34,6 +37,9 @@ export const UserProfilePage = () => {
     setPhone(user?.phone);
     setAddress(user?.address);
     setAvatar(user?.avatar);
+    setCity(user?.city);
+    setDictrict(user?.district);
+    setCommune(user?.commune);
   }, [user]);
 
   useEffect(() => {
@@ -60,6 +66,15 @@ export const UserProfilePage = () => {
   const handleChangeAddress = (value) => {
     setAddress(value);
   };
+  const handleChangeCity = (value) => {
+    setCity(value);
+  };
+  const handleChangeDistrict = (value) => {
+    setDictrict(value);
+  };
+  const handleChangeCommune = (value) => {
+    setCommune(value);
+  };
 
   const handleOnchangeAvatar = async ({ fileList }) => {
     const file = fileList[0];
@@ -82,6 +97,9 @@ export const UserProfilePage = () => {
         phone,
         address,
         avatar,
+        city,
+        district,
+        commune,
         access_token: user?.access_token,
       }
     );
@@ -142,23 +160,51 @@ export const UserProfilePage = () => {
                   />
                 </div>
                 <div className="mb-2">
-                  <label htmlFor="name">SĐT</label>
+                  <label htmlFor="phone">SĐT</label>
                   <InputForm
-                    id="name"
+                    id="phone"
                     placeholder="Số điện thoại"
                     value={phone}
                     handleonchange={handleChangePhone}
                   />
                 </div>
                 <div className="mb-2">
-                  <label htmlFor="name">Địa chỉ</label>
+                  <label htmlFor="city">Thành phố</label>
                   <InputForm
-                    id="name"
+                    id="city"
+                    placeholder="Thành phố"
+                    value={city}
+                    handleonchange={handleChangeCity}
+                  />
+                </div>
+                <div className="mb-2">
+                  <label htmlFor="district">Quận/huyện</label>
+                  <InputForm
+                    id="district"
+                    placeholder="Quận/huyện"
+                    value={district}
+                    handleonchange={handleChangeDistrict}
+                  />
+                </div>
+                <div className="mb-2">
+                  <label htmlFor="commune">Xã/thị xã</label>
+                  <InputForm
+                    id="commune"
+                    placeholder="Xã/thị xã"
+                    value={commune}
+                    handleonchange={handleChangeCommune}
+                  />
+                </div>
+                <div className="mb-2">
+                  <label htmlFor="address">Địa chỉ</label>
+                  <InputForm
+                    id="address"
                     placeholder="Địa chỉ"
                     value={address}
                     handleonchange={handleChangeAddress}
                   />
                 </div>
+                
               </Col>
             </Row>
             <Row className="border rounded-lg mt-5 flex min-[770px]:hidden">

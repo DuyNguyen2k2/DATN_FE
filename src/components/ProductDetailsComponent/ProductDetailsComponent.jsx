@@ -74,6 +74,9 @@ export const ProductDetailsComponent = ({ idProduct }) => {
     }
   }
   // console.log('product details', productDetails, user)
+  const changAddress = () => {
+    navigate('/user-profile')
+  }
 
   return (
     <div className="container mx-auto px-2">
@@ -121,12 +124,12 @@ export const ProductDetailsComponent = ({ idProduct }) => {
                   </div>
                   <div className="text-md border-t mt-5">
                     <div className="mt-3">
-                      <span>Giao đến </span>
-                      <span className="underline font-semibold">
-                        {user?.address}
+                      <span>Giao đến: </span>
+                      <span className="underline font-semibold text-lg">
+                        {`${user?.address +", "+user?.commune+", "+user?.district+", "+user?.city}`} 
                       </span>
                       <span> - </span>
-                      <span className="text-blue-400 font-semibold">
+                      <span onClick={changAddress} className="text-blue-400 font-semibold cursor-pointer hover:underline">
                         Đổi địa chỉ
                       </span>
                     </div>

@@ -7,6 +7,7 @@ import {
   Image,
   InputNumber,
   Modal,
+  notification,
   Row,
 } from "antd";
 import {
@@ -20,13 +21,23 @@ import { useDispatch, useSelector } from "react-redux";
 import productImage from "../../assets/images/Iphone13.webp";
 import { convertPrice } from "../../utils";
 import { useEffect, useMemo, useState } from "react";
-import {increAmount, decreAmount, removeOrderProduct, selectedOrder, removeAllOrderProduct} from "../../redux/slices/orderSlice"
+import {
+  increAmount,
+  decreAmount,
+  removeOrderProduct,
+  selectedOrder,
+  removeAllOrderProduct,
+} from "../../redux/slices/orderSlice";
+import { useNavigate } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
 export const OrderPage = ({ count = 1 }) => {
   const order = useSelector((state) => state.order);
+  const user = useSelector((state) => state.user);
   const [listChecked, setListChecked] = useState([]);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const onChange = (e) => {
     if (listChecked.includes(e.target.value)) {
       const newListChecked = listChecked.filter(
@@ -40,38 +51,38 @@ export const OrderPage = ({ count = 1 }) => {
 
   const handleChangeCount = (type, idProduct) => {
     // console.log('hande change count', type, idProduct, order.orderItemSelected);
-    
-    if(type === 'increment'){
-      dispatch(increAmount({idProduct}))
-    }else{
-      dispatch(decreAmount({idProduct}))
+
+    if (type === "increment") {
+      dispatch(increAmount({ idProduct }));
+    } else {
+      dispatch(decreAmount({ idProduct }));
     }
   };
 
   const handleDeleteOrder = (idProduct) => {
     dispatch(removeOrderProduct({ idProduct }));
-  }
+  };
   const handleDeleteAllOrder = () => {
-    if(listChecked?.length >= 1) {
+    if (listChecked?.length >= 1) {
       dispatch(removeAllOrderProduct({ listChecked }));
     }
-  }
+  };
 
   const handleOnchangeCheckAll = (e) => {
-    if(e.target.checked){
-      const newListChecked = []
+    if (e.target.checked) {
+      const newListChecked = [];
       order?.orderItems?.forEach((item) => {
-        newListChecked.push(item?.product)
-      })
+        newListChecked.push(item?.product);
+      });
       setListChecked(newListChecked);
-    }else{
+    } else {
       setListChecked([]);
     }
   };
 
   useEffect(() => {
-    dispatch(selectedOrder({ listChecked }))
-  }, [listChecked])
+    dispatch(selectedOrder({ listChecked }));
+  }, [listChecked]);
 
   // console.log("order", typeof order?.orderItemSelected);
   // const totalPrice =  order.orderItem.reduce((total, item) => {
@@ -79,18 +90,22 @@ export const OrderPage = ({ count = 1 }) => {
   // }, 0);
 
   const tempPrice = useMemo(() => {
-    const selectedItems = Array.isArray(order?.orderItemSelected) ? order?.orderItemSelected : [];
+    const selectedItems = Array.isArray(order?.orderItemSelected)
+      ? order?.orderItemSelected
+      : [];
     const result = selectedItems?.reduce((total, item) => {
       return total + item.price * item.amount;
-      }, 0);
-      if (Number(result)) {
+    }, 0);
+    if (Number(result)) {
       return result;
     }
     return Number(result) || 0;
   }, [order]);
 
   const discountOrder = useMemo(() => {
-    const selectedItems = Array.isArray(order?.orderItemSelected) ? order?.orderItemSelected : [];
+    const selectedItems = Array.isArray(order?.orderItemSelected)
+      ? order?.orderItemSelected
+      : [];
     const result = selectedItems?.reduce((total, item) => {
       return total + item.discount * item.amount;
     }, 0);
@@ -107,7 +122,7 @@ export const OrderPage = ({ count = 1 }) => {
     if (tempPrice >= freeDeliveryThreshold) {
       return 0;
     } else if (tempPrice === 0) {
-      return 0
+      return 0;
     }
 
     // Nếu tổng tiền dưới ngưỡng miễn phí, áp dụng phí giao hàng cố định
@@ -120,7 +135,7 @@ export const OrderPage = ({ count = 1 }) => {
 
   const showDeleteConfirm = (idProduct) => {
     Modal.confirm({
-      title: "Bạn có chắc chắn xóa đồ này không",
+      title: "Bạn có chắc chắn xóa sản phẩm này không",
       icon: <DeleteOutlined />,
       content: "Không thể hoàn tác hành động này.",
       okText: "Yes",
@@ -129,10 +144,43 @@ export const OrderPage = ({ count = 1 }) => {
       onOk() {
         handleDeleteOrder(idProduct); // Call the delete function on confirmation
       },
-      onCancel() {
-        console.log("Canceled");
-      },
     });
+  };
+
+  const showDeleteAllConfirm = () => {
+    Modal.confirm({
+      title: "Bạn có chắc chắn xóa tất cả sản phẩm này không",
+      icon: <DeleteOutlined />,
+      content: "Không thể hoàn tác hành động này.",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      onOk() {
+        handleDeleteAllOrder(); // Call the delete function on confirmation
+      }
+    });
+  };
+
+  const handleAddToCart = () => {
+    if (!user?.name || !user?.phone || !user?.address || !user?.city || !user?.district || !user?.commune) {
+      notification.warning({
+        message: "Thông tin giao hàng chưa đầy đủ",
+        description: "Vui lòng nhập đầy đủ thông tin giao hàng trong profile",
+        placement: "topRight",
+      });
+    } else if (!order?.orderItemSelected?.length) {
+      notification.warning({
+        message: "Chưa có sản phẩm nào được chọn",
+        description: "Vui lòng chọn sản phẩm để mua hàng",
+        placement: "topRight",
+      });
+    }else{
+      navigate('/payment')
+    }
+  };
+
+  const changAddress = () => {
+    navigate("/user-profile");
   };
 
   return (
@@ -158,8 +206,13 @@ export const OrderPage = ({ count = 1 }) => {
               <div className="header flex justify-between items-center bg-white p-3 rounded-md">
                 {/* CheckAll Section */}
                 <div className="flex items-center checkAll">
-                  <Checkbox onChange={handleOnchangeCheckAll} checked={listChecked.length === order?.orderItems?.length}></Checkbox>
-                  <span className="ml-2">Tất cả ({order?.orderItem?.length} sản phẩm)</span>
+                  <Checkbox
+                    onChange={handleOnchangeCheckAll}
+                    checked={listChecked.length === order?.orderItems?.length}
+                  ></Checkbox>
+                  <span className="ml-2">
+                    Tất cả ({order?.orderItem?.length} sản phẩm)
+                  </span>
                 </div>
 
                 {/* Columns Section */}
@@ -168,7 +221,10 @@ export const OrderPage = ({ count = 1 }) => {
                   <span className="w-1/4 text-center">Đơn giá</span>
                   <span className="w-1/4 text-center">Số lượng</span>
                   <span className="w-1/4 text-center">Thành tiền</span>
-                  <DeleteOutlined style={{ cursor: "pointer" }} onClick={handleDeleteAllOrder} />
+                  <DeleteOutlined
+                    style={{ cursor: "pointer" }}
+                    onClick={showDeleteAllConfirm}
+                  />
                 </div>
               </div>
 
@@ -180,7 +236,11 @@ export const OrderPage = ({ count = 1 }) => {
                     <div className="list-product flex justify-between items-center bg-white p-3 rounded-md">
                       {/* CheckAll Section */}
                       <div className="flex items-center gap-4">
-                        <Checkbox onChange={onChange} value={order?.product} checked={listChecked.includes(order?.product)}></Checkbox>
+                        <Checkbox
+                          onChange={onChange}
+                          value={order?.product}
+                          checked={listChecked.includes(order?.product)}
+                        ></Checkbox>
                         <img
                           src={order?.image}
                           alt=""
@@ -196,7 +256,9 @@ export const OrderPage = ({ count = 1 }) => {
                         </span>
                         <div className="w-1/4 mt-2 flex items-center justify-center mb-5">
                           <Button
-                            onClick={() => handleChangeCount("decrement", order?.product)}
+                            onClick={() =>
+                              handleChangeCount("decrement", order?.product)
+                            }
                             className="custom-button"
                           >
                             <MinusOutlined />
@@ -208,7 +270,9 @@ export const OrderPage = ({ count = 1 }) => {
                             className="rounded custom-input-number w-[50px]"
                           />
                           <Button
-                            onClick={() => handleChangeCount("increment", order?.product)}
+                            onClick={() =>
+                              handleChangeCount("increment", order?.product)
+                            }
                             className="custom-button"
                           >
                             <PlusOutlined />
@@ -218,7 +282,10 @@ export const OrderPage = ({ count = 1 }) => {
                         <span className="w-1/4 text-center">
                           {convertPrice(order?.price * order?.amount)}
                         </span>
-                        <DeleteOutlined style={{ cursor: "pointer" }} onClick={() => showDeleteConfirm(order?.product)}/>
+                        <DeleteOutlined
+                          style={{ cursor: "pointer" }}
+                          onClick={() => showDeleteConfirm(order?.product)}
+                        />
                       </div>
                     </div>
                   </>
@@ -228,6 +295,27 @@ export const OrderPage = ({ count = 1 }) => {
 
             <Col span={6} className=" w-[100px]">
               <div className="bg-white p-5 rounded-md">
+                <div className="mb-3">
+                  <span>Giao đến: </span>
+                  <span className="underline font-semibold text-lg">
+                    {`${
+                      user?.address +
+                      ", " +
+                      user?.commune +
+                      ", " +
+                      user?.district +
+                      ", " +
+                      user?.city
+                    }`}
+                  </span>
+                  <span> - </span>
+                  <span
+                    onClick={changAddress}
+                    className="text-blue-400 font-semibold cursor-pointer hover:underline"
+                  >
+                    Đổi địa chỉ
+                  </span>
+                </div>
                 <div className="flex justify-between">
                   <p>Tạm tính</p>
                   <p>{convertPrice(tempPrice)}</p>
@@ -254,9 +342,10 @@ export const OrderPage = ({ count = 1 }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center my-10">
+              <div className="flex justify-center my-10 ">
                 <ButtonComponent
-                  className="rounded w-[200px]"
+                  onClick={() => handleAddToCart()}
+                  className="rounded w-full"
                   danger
                   type="primary"
                   textButton="Chọn Mua"

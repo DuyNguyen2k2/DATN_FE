@@ -45,6 +45,7 @@ export const AdminUser = () => {
     phone: "",
     email: "",
     address: "",
+    city: "",
     avatar: "",
     isAdmin: false,
   });
@@ -89,6 +90,7 @@ export const AdminUser = () => {
         phone: res?.data.phone,
         email: res?.data.email,
         address: res?.data.address,
+        city: res?.data.city,
         avatar: res?.data.avatar,
         isAdmin: res?.data.isAdmin,
       });
@@ -413,6 +415,13 @@ export const AdminUser = () => {
       ...getColumnSearchProps("address"),
     },
     {
+      title: "City",
+      dataIndex: "city",
+      key: "city",
+      width: 300,
+      ...getColumnSearchProps("city"),
+    },
+    {
       title: "Admin",
       dataIndex: "isAdmin",
       key: "isAdmin",
@@ -567,6 +576,24 @@ export const AdminUser = () => {
                   className=""
                   name="address"
                   value={stateUserDetails["address"]}
+                  onChange={handleOnChangeDetails}
+                  disabled
+                />
+              </Form.Item>
+              <Form.Item
+                label="City"
+                name="city"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input address!",
+                  },
+                ]}
+              >
+                <InputComponent
+                  className=""
+                  name="city"
+                  value={stateUserDetails["city"]}
                   onChange={handleOnChangeDetails}
                   disabled
                 />
