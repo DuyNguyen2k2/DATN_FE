@@ -10,79 +10,93 @@ import { SignUpPage } from "../pages/SignUpPage/SignUpPage";
 import { TypeProductPage } from "../pages/TypeProductPage/TypeProductPage";
 import { UserProfilePage } from "../pages/UserProfilePage/UserProfilePage";
 import { PaymentPage } from "../pages/PaymentPage/PaymentPage";
+import { OrderSuccess } from "../pages/OrderSuccess/OrderSuccess";
+import { MyOrderPage } from "../pages/MyOrderPage/MyOrderPage";
 
 export const routes = [
   {
     path: "/",
     page: HomePage,
     isShowHeader: true,
-    isShowFooter: true
+    isShowFooter: true,
   },
   {
     path: "/order",
     page: OrderPage,
     isShowHeader: true,
-    isShowFooter: true
+    isShowFooter: true,
+  },
+  {
+    path: "/my-order",
+    page: MyOrderPage,
+    isShowHeader: true,
+    isShowFooter: true,
   },
   {
     path: "/payment",
     page: PaymentPage,
     isShowHeader: true,
-    isShowFooter: true
+    isShowFooter: true,
+  },
+  {
+    path: "/orderSuccess",
+    page: OrderSuccess,
+    isShowHeader: true,
+    isShowFooter: true,
   },
   {
     path: "/products",
     page: ProductPage,
     isShowHeader: true,
-    isShowFooter: true
+    isShowFooter: true,
   },
   {
     path: "products/:type",
     page: TypeProductPage,
     isShowHeader: true,
-    isShowFooter: true
+    isShowFooter: true,
   },
   {
     path: "/sign-in",
     page: SignInPage,
     isShowHeader: false,
-    isShowFooter: false
+    isShowFooter: false,
   },
   {
     path: "/sign-up",
     page: SignUpPage,
     isShowHeader: false,
-    isShowFooter: false
+    isShowFooter: false,
   },
   {
     path: "/product-details/:id",
     page: ProductDetailsPage,
     isShowHeader: true,
-    isShowFooter: true
+    isShowFooter: true,
   },
   {
     path: "/user-profile",
     page: UserProfilePage,
     isShowHeader: true,
-    isShowFooter: true
+    isShowFooter: true,
   },
   {
     path: "/system/admin",
     page: AdminPage,
     isShowHeader: false,
     isPrivate: true,
-    isShowFooter: false
+    isShowFooter: false,
   },
   {
     path: "/access-denied",
     page: AccessDeniedPage,
     isShowHeader: false,
-    isShowFooter: false
+    isShowFooter: false,
   },
   {
     path: "*",
     page: NotFoundPage,
     isShowHeader: false,
-    isShowFooter: false
+    isShowFooter: false,
   },
 ];

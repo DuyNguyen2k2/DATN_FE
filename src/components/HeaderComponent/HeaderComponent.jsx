@@ -21,15 +21,12 @@ export const HeaderComponent = ({
     navigate("/sign-in");
   };
 
-  const handleUserProfile = () => {
-    navigate("/user-profile");
-  };
-
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
+  const [isOpenPopUp, setIsOpenPopUp] = useState(false);
   const order = useSelector((state) => state.order);
 
   const handleLogout = async () => {
@@ -46,11 +43,23 @@ export const HeaderComponent = ({
     setLoading(false);
   }, [user?.name]);
 
+  const handleNavigate = (type) => {
+    if(type === 'profile'){
+      navigate("/user-profile");
+    }else if (type === 'admin'){
+      navigate("/system/admin");
+    }else if (type === 'my-order'){
+      navigate("/my-order");
+    }else {
+      handleLogout();
+    }
+  }
+
   const content = (
     <div>
       <p
         className="p-2 cursor-pointer hover:underline"
-        onClick={handleUserProfile}
+        onClick={() => handleNavigate('profile')}
       >
         Thông tin người dùng
       </p>
@@ -58,7 +67,7 @@ export const HeaderComponent = ({
         <p
           className="p-2 cursor-pointer hover:underline"
           onClick={() => {
-            navigate("/system/admin");
+            handleNavigate('admin')
           }}
         >
           Quản lý hệ thống
@@ -66,8 +75,15 @@ export const HeaderComponent = ({
       ) : (
         <p></p>
       )}
-
-      <p className="p-2 cursor-pointer hover:underline" onClick={handleLogout}>
+        <p
+        className="p-2 cursor-pointer hover:underline"
+        onClick={() => {
+          handleNavigate('my-order')
+        }}
+      >
+        Đơn hàng của tôi
+      </p>
+      <p className="p-2 cursor-pointer hover:underline" onClick={() => handleNavigate()}>
         Đăng xuất
       </p>
     </div>
@@ -127,8 +143,8 @@ export const HeaderComponent = ({
                 {user?.access_token ? (
                   <div className="flex flex-col px-2 xl:text-sm text-xs">
                     <span>Hi,</span>
-                    <Popover content={content} trigger="click">
-                      <span className="w-28 truncate cursor-pointer hover:underline">
+                    <Popover content={content} trigger="click" open={isOpenPopUp}>
+                      <span className="w-28 truncate cursor-pointer hover:underline" onClick={() => setIsOpenPopUp((prev) => !prev)}>
                         {userName}
                       </span>
                     </Popover>

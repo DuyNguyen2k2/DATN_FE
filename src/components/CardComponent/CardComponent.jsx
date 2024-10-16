@@ -16,29 +16,39 @@ export const CardComponent = (props) => {
     type,
     selled,
     discount,
-    id
+    id,
+    disabled,
   } = props;
 
-  const navigate = useNavigate()
+  const isDisabled = countInStock === 0;
+  const navigate = useNavigate();
 
   const handleDetailsProduct = (id) => {
-      navigate(`/product-details/${id}`)
-  }
-  
+    if (!isDisabled) {
+      navigate(`/product-details/${id}`);
+    }
+  };
+
   return (
     <>
+     <div className="relative">
       <Card
-        className="relative hidden min-[770px]:block"
-        hoverable
+        className={`relative hidden min-[770px]:block ${
+          isDisabled
+            ? "bg-gray-300 cursor-not-allowed"
+            : "bg-white cursor-pointer"
+        }`}
+        hoverable={!isDisabled}
         style={{
           width: 230,
           height: 400,
         }}
         cover={
-          <img className="object-contain"
+          <img
+            className="object-contain"
             alt="product"
             src={image}
-            style={{ height: "250px"}}
+            style={{ height: "250px" }}
           />
         }
         onClick={() => handleDetailsProduct(id)}
@@ -58,15 +68,24 @@ export const CardComponent = (props) => {
             <i className="fa-solid fa-star" style={{ color: "#FFD43B" }}></i>
           </span>
           <span> | </span>
-          <span>Đã bán {selled || 1000}</span>
+          <span>Đã bán {selled || 0}</span>
         </div>
 
         <div className="flex items-center">
-          <span className="font-bold text-lg text-red-500">{convertPrice(price - (price*(discount/100)))} </span>
-          
+          <span className="font-bold text-lg text-red-500">
+            {convertPrice(price - price * (discount / 100))}{" "}
+          </span>
+
           {discount > 0 && <span className="text-red-500"> -{discount}% </span>}
         </div>
       </Card>
+      {isDisabled && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-red-500 text-white font-bold p-2 z-10">
+            Đã hết hàng
+          </div>
+        )}
+      </div>
+
       <Card
         className="relative min-[770px]:hidden block"
         hoverable
@@ -74,11 +93,7 @@ export const CardComponent = (props) => {
           width: 170,
         }}
         cover={
-          <img
-            alt="example"
-            src={image}
-            className="h-[170px] object-contain"
-          />
+          <img alt="example" src={image} className="h-[170px] object-contain" />
         }
         onClick={() => handleDetailsProduct(id)}
       >
@@ -101,7 +116,9 @@ export const CardComponent = (props) => {
         </div>
 
         <div className="flex items-center">
-          <span className="font-bold text-lg text-red-500">{price.toLocaleString()} đ </span>
+          <span className="font-bold text-lg text-red-500">
+            {price.toLocaleString()} đ{" "}
+          </span>
           <span className="text-red-500"> -{discount || 5}%</span>
         </div>
       </Card>

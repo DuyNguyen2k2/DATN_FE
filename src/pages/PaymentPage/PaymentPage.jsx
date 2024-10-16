@@ -12,6 +12,9 @@ import { useNavigate } from "react-router-dom";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import * as OrderServices from "../../services/OrderServices";
 import { Loading } from "../../components/LoadingComponent/Loading";
+import {
+  removeAllOrderProduct,
+} from "../../redux/slices/orderSlice";
 
 // eslint-disable-next-line react/prop-types
 export const PaymentPage = ({ count = 1 }) => {
@@ -19,17 +22,8 @@ export const PaymentPage = ({ count = 1 }) => {
   const user = useSelector((state) => state.user);
   const [delivery, setDelivery] = useState("fast");
   const [payment, setPayment] = useState("later_money");
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [stateUserDetails, setstateUserDetails] = useState({
-    name: "",
-    phone: "",
-    address: "",
-    city: "",
-    district: "",
-    commune: "",
-  });
+  const dispatch = useDispatch();
   // console.log("order", typeof order?.orderItemSelected);
   // const totalPrice =  order.orderItem.reduce((total, item) => {
   //   return total + item.price * item.amount;
@@ -110,7 +104,6 @@ export const PaymentPage = ({ count = 1 }) => {
     }
   };
 
-  console.log("order", order, user);
 
   const mutationAddOrder = useMutationHooks((data) => {
     const { token, ...rests } = data;
@@ -124,27 +117,28 @@ export const PaymentPage = ({ count = 1 }) => {
     navigate("/user-profile");
   };
 
-  useEffect(() => {
-    setstateUserDetails({
-      ...stateUserDetails,
-      name: user?.name,
-      phone: user?.phone,
-      address: user?.address,
-      city: user?.city,
-      district: user?.district,
-      commune: user?.commune,
-    });
-  }, [user]);
-  console.log("state user details", stateUserDetails);
 
   useEffect(() => {
     if(data?.status === 'OK'){
       notification.success({
-        message:"Thành công",
+        message:"Đặt hàng thành công",
       });
+      const arrayOrdered = []
+      order?.orderItemSelected.forEach((element) => {
+        arrayOrdered.push(element.product)
+      })
+      dispatch(removeAllOrderProduct({listChecked: arrayOrdered}));
+      setTimeout(() => {
+        navigate("/orderSuccess", {state: {
+          delivery,
+          payment,
+          orders: order?.orderItemSelected,
+          totalPrice: totalPrice,      
+        }});
+      }, 500);
     }else if(data?.status === 'ERR'){
       notification.error({
-        message: "Không thành công",
+        message: "Đặt hàng không thành công",
       });
     }
   }, [data])
@@ -161,7 +155,7 @@ export const PaymentPage = ({ count = 1 }) => {
                   title: <HomeOutlined />,
                 },
                 {
-                  title: "Giỏ hàng",
+                  title: "Thanh toán",
                 },
               ]}
             />
@@ -192,7 +186,7 @@ export const PaymentPage = ({ count = 1 }) => {
                       Giao hàng tiết kiệm
                     </span>
                   </div>
-                  <div className="flex items-center">
+                  <div className="flex items-center ">
                     <input
                       type="radio"
                       id="delivery-gojek"

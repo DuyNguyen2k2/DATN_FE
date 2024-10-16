@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import {
   Breadcrumb,
@@ -29,6 +30,7 @@ import {
   removeAllOrderProduct,
 } from "../../redux/slices/orderSlice";
 import { useNavigate } from "react-router-dom";
+import { StepsComponent } from "../../components/StepsComponent/StepsComponent";
 
 // eslint-disable-next-line react/prop-types
 export const OrderPage = ({ count = 1 }) => {
@@ -116,12 +118,15 @@ export const OrderPage = ({ count = 1 }) => {
   }, [order]);
   const deliveryPrice = useMemo(() => {
     const fixedDeliveryFee = 20000; // Mức phí giao hàng cố định
-    const freeDeliveryThreshold = 300000; // Ngưỡng miễn phí giao hàng
-
+    const freeDeliveryThreshold1 = 300000; // Ngưỡng miễn phí giao hàng
+    const freeDeliveryThreshold2 = 500000; // Ngưỡng miễn phí giao hàng
     // Nếu tổng tiền lớn hơn ngưỡng miễn phí, không tính phí giao hàng
-    if (tempPrice >= freeDeliveryThreshold) {
-      return 0;
-    } else if (tempPrice === 0) {
+    if (
+      tempPrice >= freeDeliveryThreshold1 &&
+      tempPrice <= freeDeliveryThreshold2
+    ) {
+      return 10000;
+    } else if (tempPrice === 0 || tempPrice >= freeDeliveryThreshold2) {
       return 0;
     }
 
@@ -157,12 +162,19 @@ export const OrderPage = ({ count = 1 }) => {
       cancelText: "No",
       onOk() {
         handleDeleteAllOrder(); // Call the delete function on confirmation
-      }
+      },
     });
   };
 
   const handleAddToCart = () => {
-    if (!user?.name || !user?.phone || !user?.address || !user?.city || !user?.district || !user?.commune) {
+    if (
+      !user?.name ||
+      !user?.phone ||
+      !user?.address ||
+      !user?.city ||
+      !user?.district ||
+      !user?.commune
+    ) {
       notification.warning({
         message: "Thông tin giao hàng chưa đầy đủ",
         description: "Vui lòng nhập đầy đủ thông tin giao hàng trong profile",
@@ -174,14 +186,29 @@ export const OrderPage = ({ count = 1 }) => {
         description: "Vui lòng chọn sản phẩm để mua hàng",
         placement: "topRight",
       });
-    }else{
-      navigate('/payment')
+    } else {
+      navigate("/payment");
     }
   };
 
   const changAddress = () => {
     navigate("/user-profile");
   };
+
+  const itemsStep = [
+    {
+      title: "20.000 VNĐ",
+      description: "Dưới 300.000",
+    },
+    {
+      title: "10.000 VNĐ",
+      description: "300.001 - 500.000",
+    },
+    {
+      title: "0 VNĐ",
+      description: "Trên 500.000",
+    },
+  ];
 
   return (
     <div className="container-2xl bg-[#fff8f8] h-[100vh]">
@@ -202,6 +229,20 @@ export const OrderPage = ({ count = 1 }) => {
         <div className="">
           <Row>
             <Col span={18} className="px-5">
+              <div className="mb-5 bg-white p-5">
+                <StepsComponent
+                  items={itemsStep}
+                  current={
+                    deliveryPrice === 20000
+                      ? 0
+                      : deliveryPrice === 10000
+                      ? 1
+                      : order?.orderItemSelected.length === 0
+                      ? 0
+                      : 2
+                  }
+                />
+              </div>
               {/* Header Section */}
               <div className="header flex justify-between items-center bg-white p-3 rounded-md">
                 {/* CheckAll Section */}
