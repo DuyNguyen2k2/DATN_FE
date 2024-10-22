@@ -13,6 +13,16 @@ export const createOrder = async (access_token, data) => {
     return res.data;
   };
 
+  export const getAllOrderDetails = async (access_token, id) => {
+    // console.log('URL', BE_URL)
+    const res = await axiosJWT.get(`${BE_URL}/order/getAllOrder/${id}`, {
+      headers: {
+        token: `Bearer ${access_token}`,
+      },
+    });
+    return res.data;
+  };
+
   export const getOrderDetails = async (access_token, id) => {
     // console.log('URL', BE_URL)
     const res = await axiosJWT.get(`${BE_URL}/order/getOrderDetails/${id}`, {

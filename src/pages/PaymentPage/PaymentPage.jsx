@@ -56,17 +56,27 @@ export const PaymentPage = ({ count = 1 }) => {
   }, [order]);
   const deliveryPrice = useMemo(() => {
     const fixedDeliveryFee = 20000; // Mức phí giao hàng cố định
-    const freeDeliveryThreshold = 300000; // Ngưỡng miễn phí giao hàng
-
-    // Nếu tổng tiền lớn hơn ngưỡng miễn phí, không tính phí giao hàng
-    if (tempPrice >= freeDeliveryThreshold) {
-      return 10000;
-    } else if (tempPrice === 0) {
+    const freeDeliveryThreshold1 = 300000; // Ngưỡng giảm phí giao hàng
+    const freeDeliveryThreshold2 = 500000; // Ngưỡng miễn phí giao hàng
+  
+    // Nếu không chọn sản phẩm nào, phí giao hàng là 0
+    if (tempPrice === 0) {
       return 0;
     }
-
-    // Nếu tổng tiền dưới ngưỡng miễn phí, áp dụng phí giao hàng cố định
-    return fixedDeliveryFee;
+    // Nếu tổng tiền trên ngưỡng 500.000, miễn phí giao hàng
+    else if (tempPrice > freeDeliveryThreshold2) {
+      return 0;
+    } 
+    // Nếu tổng tiền từ 300.001 đến 500.000, phí giao hàng 10.000
+    else if (tempPrice > freeDeliveryThreshold1 && tempPrice <= freeDeliveryThreshold2) {
+      return 10000;
+    } 
+    // Nếu tổng tiền dưới 300.000, phí giao hàng 20.000
+    else if (tempPrice > 0) {
+      return fixedDeliveryFee;
+    }
+  
+    return fixedDeliveryFee; // Phí mặc định nếu không có hàng
   }, [tempPrice]);
   // Cập nhật tổng tiền vào order
   const totalPrice = useMemo(() => {
@@ -97,7 +107,7 @@ export const PaymentPage = ({ count = 1 }) => {
         phone: user?.phone,
         paymentMethod: payment,
         itemsPrice: tempPrice,
-        shippingPrice: deliveryPrice,
+        shippingPrice: Number(deliveryPrice),
         totalPrice: totalPrice,
         user: user?.id,
       })

@@ -47,9 +47,11 @@ export const AdminProduct = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
     form.resetFields();
+    // Reset product state as well
+    setStateProduct(initial());  // Reset to initial state or empty object
   };
 
-  const [stateProduct, setStateProduct] = useState({
+  const initial = () => ({
     name: "",
     price: "",
     description: "",
@@ -59,18 +61,11 @@ export const AdminProduct = () => {
     image: "",
     rating: "",
     newType: "",
-  });
+  })
 
-  const [stateProductDetails, setStateProductDetails] = useState({
-    name: "",
-    price: "",
-    description: "",
-    countInStock: "",
-    type: "",
-    discount: "",
-    image: "",
-    rating: "",
-  });
+  const [stateProduct, setStateProduct] = useState(initial());
+
+  const [stateProductDetails, setStateProductDetails] = useState(initial());
 
   const mutation = useMutationHooks((data) => {
     const {
@@ -224,8 +219,22 @@ export const AdminProduct = () => {
   };
 
   useEffect(() => {
-    form.setFieldsValue(stateProductDetails);
-  }, [form, stateProductDetails]);
+    if (!isModalOpen) {
+      form.setFieldsValue(stateProductDetails);
+      // Reset the image field manually
+      setStateProduct(prevState => ({
+        ...prevState,
+        image: stateProductDetails.image || null // Set it to null or the initial image
+      }));
+    } else {
+      form.setFieldsValue(initial());
+      // Optionally, clear the image when initializing
+      setStateProduct(prevState => ({
+        ...prevState,
+        image: null
+      }));
+    }
+  }, [form, stateProductDetails, isModalOpen]);
 
   useEffect(() => {
     if (rowSelected) {

@@ -31,24 +31,22 @@ export const CardComponent = (props) => {
 
   return (
     <>
-     <div className="relative">
+      <div className="relative">
       <Card
-        className={`relative hidden min-[770px]:block ${
-          isDisabled
-            ? "bg-gray-300 cursor-not-allowed"
-            : "bg-white cursor-pointer"
-        }`}
+        className={`relative ${
+          isDisabled ? "bg-gray-300 cursor-not-allowed" : "bg-white cursor-pointer"
+        } mb-5`}
         hoverable={!isDisabled}
         style={{
-          width: 230,
-          height: 400,
+          width: "230px", // Chiều rộng cố định
+          height: "400px",
         }}
         cover={
           <img
-            className="object-contain"
+            className="object-cover h-48 w-full" // Sử dụng width: 100% để mở rộng ảnh tới chiều rộng card
             alt="product"
             src={image}
-            style={{ height: "250px" }}
+            style={{ objectFit: "contain" }} // Đảm bảo ảnh không bị méo
           />
         }
         onClick={() => handleDetailsProduct(id)}
@@ -59,7 +57,7 @@ export const CardComponent = (props) => {
           className="w-[68px] h-auto absolute top-0 left-0"
         />
         <div className="text-lg">
-          <p className="font-semibold w-[200px] line-clamp-2">{name}</p>
+          <p className="font-semibold line-clamp-2">{name}</p>
         </div>
 
         <div className="text-sm mb-2">
@@ -71,29 +69,30 @@ export const CardComponent = (props) => {
           <span>Đã bán {selled || 0}</span>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex justify-between items-center">
           <span className="font-bold text-lg text-red-500">
             {convertPrice(price - price * (discount / 100))}{" "}
           </span>
-
           {discount > 0 && <span className="text-red-500"> -{discount}% </span>}
         </div>
       </Card>
-      {isDisabled && (
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-red-500 text-white font-bold p-2 z-10">
-            Đã hết hàng
-          </div>
-        )}
-      </div>
 
-      <Card
-        className="relative min-[770px]:hidden block"
-        hoverable
+      {/* <Card
+        className={`relative ${
+          isDisabled ? "bg-gray-300 cursor-not-allowed" : "bg-white cursor-pointer"
+        } md:hidden block mb-5`}
+        hoverable={!isDisabled}
         style={{
-          width: 170,
+          width: "100%", // Chiều rộng cố định
+          height: "400px",
         }}
         cover={
-          <img alt="example" src={image} className="h-[170px] object-contain" />
+          <img
+            className="object-cover h-48 w-full" // Sử dụng width: 100% để mở rộng ảnh tới chiều rộng card
+            alt="product"
+            src={image}
+            style={{ objectFit: "contain" }} // Đảm bảo ảnh không bị méo
+          />
         }
         onClick={() => handleDetailsProduct(id)}
       >
@@ -103,7 +102,7 @@ export const CardComponent = (props) => {
           className="w-[68px] h-auto absolute top-0 left-0"
         />
         <div className="text-lg">
-          <p className="font-semibold w-[200px] line-clamp-2">{name}</p>
+          <p className="font-semibold line-clamp-2">{name}</p>
         </div>
 
         <div className="text-sm mb-2">
@@ -112,16 +111,23 @@ export const CardComponent = (props) => {
             <i className="fa-solid fa-star" style={{ color: "#FFD43B" }}></i>
           </span>
           <span> | </span>
-          <span>Đã bán {selled || 1000}</span>
+          <span>Đã bán {selled || 0}</span>
         </div>
 
-        <div className="flex items-center">
+        <div className="flex justify-between items-center">
           <span className="font-bold text-lg text-red-500">
-            {price.toLocaleString()} đ{" "}
+            {convertPrice(price - price * (discount / 100))}{" "}
           </span>
-          <span className="text-red-500"> -{discount || 5}%</span>
+          {discount > 0 && <span className="text-red-500"> -{discount}% </span>}
         </div>
-      </Card>
+      </Card> */}
+
+      {isDisabled && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-red-500 text-white font-bold p-2 z-10">
+          Đã hết hàng
+        </div>
+      )}
+    </div>
     </>
   );
 };
