@@ -12,9 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutationHooks } from "../../hooks/useMutationHook";
 import * as OrderServices from "../../services/OrderServices";
 import { Loading } from "../../components/LoadingComponent/Loading";
-import {
-  removeAllOrderProduct,
-} from "../../redux/slices/orderSlice";
+import { removeAllOrderProduct } from "../../redux/slices/orderSlice";
 
 // eslint-disable-next-line react/prop-types
 export const PaymentPage = ({ count = 1 }) => {
@@ -58,7 +56,7 @@ export const PaymentPage = ({ count = 1 }) => {
     const fixedDeliveryFee = 20000; // Mức phí giao hàng cố định
     const freeDeliveryThreshold1 = 300000; // Ngưỡng giảm phí giao hàng
     const freeDeliveryThreshold2 = 500000; // Ngưỡng miễn phí giao hàng
-  
+
     // Nếu không chọn sản phẩm nào, phí giao hàng là 0
     if (tempPrice === 0) {
       return 0;
@@ -66,21 +64,24 @@ export const PaymentPage = ({ count = 1 }) => {
     // Nếu tổng tiền trên ngưỡng 500.000, miễn phí giao hàng
     else if (tempPrice > freeDeliveryThreshold2) {
       return 0;
-    } 
+    }
     // Nếu tổng tiền từ 300.001 đến 500.000, phí giao hàng 10.000
-    else if (tempPrice > freeDeliveryThreshold1 && tempPrice <= freeDeliveryThreshold2) {
+    else if (
+      tempPrice > freeDeliveryThreshold1 &&
+      tempPrice <= freeDeliveryThreshold2
+    ) {
       return 10000;
-    } 
+    }
     // Nếu tổng tiền dưới 300.000, phí giao hàng 20.000
     else if (tempPrice > 0) {
       return fixedDeliveryFee;
     }
-  
+
     return fixedDeliveryFee; // Phí mặc định nếu không có hàng
   }, [tempPrice]);
   // Cập nhật tổng tiền vào order
   const totalPrice = useMemo(() => {
-    return Number(tempPrice) - Number(discountOrder) + Number(deliveryPrice);
+    return Number(tempPrice) - Number(tempPrice*(discountOrder/100)) + Number(deliveryPrice);
   }, [tempPrice, discountOrder, discountOrder]);
 
   const handleAddOrder = () => {
@@ -110,10 +111,9 @@ export const PaymentPage = ({ count = 1 }) => {
         shippingPrice: Number(deliveryPrice),
         totalPrice: totalPrice,
         user: user?.id,
-      })
+      });
     }
   };
-
 
   const mutationAddOrder = useMutationHooks((data) => {
     const { token, ...rests } = data;
@@ -127,31 +127,32 @@ export const PaymentPage = ({ count = 1 }) => {
     navigate("/user-profile");
   };
 
-
   useEffect(() => {
-    if(data?.status === 'OK'){
+    if (data?.status === "OK") {
       notification.success({
-        message:"Đặt hàng thành công",
+        message: "Đặt hàng thành công",
       });
-      const arrayOrdered = []
+      const arrayOrdered = [];
       order?.orderItemSelected.forEach((element) => {
-        arrayOrdered.push(element.product)
-      })
-      dispatch(removeAllOrderProduct({listChecked: arrayOrdered}));
+        arrayOrdered.push(element.product);
+      });
+      dispatch(removeAllOrderProduct({ listChecked: arrayOrdered }));
       setTimeout(() => {
-        navigate("/orderSuccess", {state: {
-          delivery,
-          payment,
-          orders: order?.orderItemSelected,
-          totalPrice: totalPrice,      
-        }});
+        navigate("/orderSuccess", {
+          state: {
+            delivery,
+            payment,
+            orders: order?.orderItemSelected,
+            totalPrice: totalPrice,
+          },
+        });
       }, 500);
-    }else if(data?.status === 'ERR'){
+    } else if (data?.status === "ERR") {
       notification.error({
         message: "Đặt hàng không thành công",
       });
     }
-  }, [data])
+  }, [data]);
 
   return (
     <div className="container-2xl bg-[#fff8f8] h-[100vh]">
@@ -182,7 +183,7 @@ export const PaymentPage = ({ count = 1 }) => {
                       type="radio"
                       id="delivery-fast"
                       name="delivery"
-                      checked={delivery === 'fast'}
+                      checked={delivery === "fast"}
                       value="fast"
                       className="mr-2"
                     />
@@ -201,7 +202,7 @@ export const PaymentPage = ({ count = 1 }) => {
                       type="radio"
                       id="delivery-gojek"
                       name="delivery"
-                      checked={delivery === 'gojek'}
+                      checked={delivery === "gojek"}
                       value="gojek"
                       className="mr-2"
                     />
@@ -227,7 +228,7 @@ export const PaymentPage = ({ count = 1 }) => {
                       type="radio"
                       id="payment-cod"
                       name="payment"
-                      checked={payment === 'later_money'}
+                      checked={payment === "later_money"}
                       value="later_money"
                       className="mr-2"
                     />
@@ -293,6 +294,7 @@ export const PaymentPage = ({ count = 1 }) => {
                 <div className="flex justify-center my-10 ">
                   <ButtonComponent
                     onClick={() => handleAddOrder()}
+                    disabled={isLoading} // Disables button while mutation is in progress
                     className="rounded w-full"
                     danger
                     type="primary"

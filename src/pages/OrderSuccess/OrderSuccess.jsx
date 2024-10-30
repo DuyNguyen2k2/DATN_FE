@@ -89,13 +89,13 @@ export const OrderSuccess = ({ count = 1 }) => {
 
                         <span className="w-1/5 text-center">{order?.name}</span>
                         <span className="w-1/5 text-center">
-                          {convertPrice(order?.price)}
+                          {convertPrice(order?.price - (order?.price*order?.discount/100))}
                         </span>
                         <span className="w-1/5 text-center">
                           {order?.amount}
                         </span>
                         <span className="w-1/5 text-center">
-                          {convertPrice(order?.price * order?.amount)}
+                          {convertPrice((order?.price - (order?.price*order?.discount/100)) * order?.amount)}
                         </span>
                       </div>
                     </>

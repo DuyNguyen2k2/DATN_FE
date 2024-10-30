@@ -99,7 +99,7 @@ export const HeaderComponent = ({
       <Row className="container mx-auto p-3 flex flex-wrap justify-between items-center">
         <Col xs={24} sm={12} md={6} className="text-center md:text-left">
           <h1
-            className="cursor-pointer hover:text-cyan-400 text-3xl font-bold"
+            className="cursor-pointer hover:text-cyan-400 text-3xl font-bold text-white"
             onClick={() => navigate("/")}
           >
             TECHTROVEDECOR
@@ -173,7 +173,7 @@ export const HeaderComponent = ({
               <Badge
                 count={order?.orderItems?.length}
                 size="small"
-                className="flex justify-start items-center"
+                showZero
               >
                 <i className="fa-solid fa-cart-shopping fa-2xl text-white"></i>
               </Badge>

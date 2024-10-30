@@ -32,3 +32,19 @@ export const createOrder = async (access_token, data) => {
     });
     return res.data;
   };
+
+  export const cancelOrders = async (access_token, id, orderItems) => {
+    const config = {
+      headers: {
+        token: `Bearer ${access_token}`, // Đúng chuẩn `Bearer <token>`
+      },
+      data: orderItems,
+    };
+  
+    // console.log("Cancel Order Request Config:", config); // Log cấu hình để kiểm tra
+    const res = await axiosJWT.delete(`${BE_URL}/order/cancel-order/${id}`, config);
+    return res.data;
+  };
+  
+  
+  

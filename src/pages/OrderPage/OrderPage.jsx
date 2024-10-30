@@ -51,13 +51,25 @@ export const OrderPage = ({ count = 1 }) => {
     }
   };
 
-  const handleChangeCount = (type, idProduct) => {
-    // console.log('hande change count', type, idProduct, order.orderItemSelected);
-
+  const handleChangeCount = (type, idProduct, limited) => {
     if (type === "increment") {
-      dispatch(increAmount({ idProduct }));
-    } else {
-      dispatch(decreAmount({ idProduct }));
+      if (!limited) {
+        dispatch(increAmount({ idProduct }));
+      } else {
+        notification.warning({
+          message: "Warning",
+          description: "Vượt quá số lượng sản phẩm hiện có",
+        });
+      }
+    } else if (type === "decrement") {
+      if (!limited) {
+        dispatch(decreAmount({ idProduct }));
+      } else {
+        notification.warning({
+          message: "Warning",
+          description: "Sản phẩm đã đạt số lượng tối thiểu",
+        });
+      }
     }
   };
 
@@ -108,19 +120,19 @@ export const OrderPage = ({ count = 1 }) => {
     const selectedItems = Array.isArray(order?.orderItemSelected)
       ? order?.orderItemSelected
       : [];
-    const result = selectedItems?.reduce((total, item) => {
-      return total + item.discount * item.amount;
+
+    const result = selectedItems.reduce((total, item) => {
+      // Chỉ áp dụng chiết khấu một lần cho mỗi sản phẩm, không phụ thuộc vào số lượng
+      return total + item.discount;
     }, 0);
-    if (Number(result)) {
-      return result;
-    }
+
     return Number(result) || 0;
   }, [order]);
   const deliveryPrice = useMemo(() => {
     const fixedDeliveryFee = 20000; // Mức phí giao hàng cố định
     const freeDeliveryThreshold1 = 300000; // Ngưỡng giảm phí giao hàng
     const freeDeliveryThreshold2 = 500000; // Ngưỡng miễn phí giao hàng
-  
+
     // Nếu không chọn sản phẩm nào, phí giao hàng là 0
     if (tempPrice === 0) {
       return 0;
@@ -128,22 +140,29 @@ export const OrderPage = ({ count = 1 }) => {
     // Nếu tổng tiền trên ngưỡng 500.000, miễn phí giao hàng
     else if (tempPrice > freeDeliveryThreshold2) {
       return 0;
-    } 
+    }
     // Nếu tổng tiền từ 300.001 đến 500.000, phí giao hàng 10.000
-    else if (tempPrice > freeDeliveryThreshold1 && tempPrice <= freeDeliveryThreshold2) {
+    else if (
+      tempPrice > freeDeliveryThreshold1 &&
+      tempPrice <= freeDeliveryThreshold2
+    ) {
       return 10000;
-    } 
+    }
     // Nếu tổng tiền dưới 300.000, phí giao hàng 20.000
     else if (tempPrice > 0) {
       return fixedDeliveryFee;
     }
-  
+
     return fixedDeliveryFee; // Phí mặc định nếu không có hàng
   }, [tempPrice]);
   // Cập nhật tổng tiền vào order
   const totalPrice = useMemo(() => {
-    return Number(tempPrice) - Number(discountOrder) + Number(deliveryPrice);
-  }, [tempPrice, discountOrder, discountOrder]);
+    return (
+      Number(tempPrice) -
+      Number(tempPrice * (discountOrder / 100)) +
+      Number(deliveryPrice)
+    );
+  }, [tempPrice, discountOrder, deliveryPrice]);
 
   const showDeleteConfirm = (idProduct) => {
     Modal.confirm({
@@ -278,7 +297,7 @@ export const OrderPage = ({ count = 1 }) => {
 
               {/* List Product Section */}
               {order?.orderItems?.map((order) => {
-                // console.log("checkOrder", order);
+                console.log("checkOrder", order?.countInStock);
                 return (
                   <>
                     <div className="list-product flex justify-between items-center bg-white p-3 rounded-md">
@@ -305,7 +324,11 @@ export const OrderPage = ({ count = 1 }) => {
                         <div className="w-1/4 mt-2 flex items-center justify-center mb-5">
                           <Button
                             onClick={() =>
-                              handleChangeCount("decrement", order?.product)
+                              handleChangeCount(
+                                "decrement",
+                                order?.product,
+                                order?.amount === 1
+                              )
                             }
                             className="custom-button"
                           >
@@ -319,7 +342,11 @@ export const OrderPage = ({ count = 1 }) => {
                           />
                           <Button
                             onClick={() =>
-                              handleChangeCount("increment", order?.product)
+                              handleChangeCount(
+                                "increment",
+                                order?.product,
+                                order?.amount === order?.countInStock
+                              )
                             }
                             className="custom-button"
                           >

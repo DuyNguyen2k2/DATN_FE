@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-unused-vars */
 import { Breadcrumb, Button, Modal, notification, Row } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
@@ -8,6 +9,7 @@ import { useQuery } from "react-query";
 import { Loading } from "../../components/LoadingComponent/Loading";
 import * as OrderServives from "../../services/OrderServices";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useMutationHooks } from "../../hooks/useMutationHook";
 
 // eslint-disable-next-line react/prop-types
 export const MyOrderPage = () => {
@@ -86,10 +88,53 @@ export const MyOrderPage = () => {
     });
   };
 
+  const mutation = useMutationHooks((data) => {
+    const {token, id, orderItems} = data
+    const res = OrderServives.cancelOrders(token, id, orderItems)
+    return res
+  })
+
+  const handleCancelOrders = (order) => {
+    if (!state?.token) {
+      console.error("Token is missing in handleCancelOrders");
+      return;
+    }
+  
+    mutation.mutate(
+      { token: state.token, id: order._id, orderItems: order?.orderItems },
+      {
+        onSuccess: () => {
+          queryOrders.refetch();
+        },
+        onError: (error) => {
+          console.error("Error cancelling order:", error);
+        },
+      }
+    );
+  };
+  
+
+  const {isLoading: isLoadingCancel, data: dataCancel} = mutation
+
+  useEffect(() => {
+    if(dataCancel?.status === 'OK'){
+      notification.open({
+        message: dataCancel?.message,
+        type: "success",
+      });
+    }else if(dataCancel?.status === 'ERR'){
+      notification.open({
+        message: dataCancel?.message,
+        type: "error",
+      });
+    }
+  }, [dataCancel])
+
   const renderProduct = (data) => {
     return data?.map((order) => {
       // Calculate total amount for each order
       // console.log("order id", order?._id);
+      console.log('order', order)
       return (
         <>
           {/* Order Item Section */}
@@ -124,7 +169,7 @@ export const MyOrderPage = () => {
   };
 
   return (
-    <Loading isLoading={isLoading}>
+    <Loading isLoading={isLoading || isLoadingCancel}>
       <div className="container-2xl bg-[#fff8f8] min-h-[100vh]">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-2 w-full truncate">
@@ -185,7 +230,7 @@ export const MyOrderPage = () => {
                     </button>
                     <button
                       className="bg-red-600 text-white text-xs sm:text-base py-2 px-3 sm:px-4 rounded-md hover:bg-red-500 transition"
-                      // onClick={() => handleCancelOrder(order?.id)}
+                      onClick={() => handleCancelOrders(order)}
                     >
                       Hủy Đơn Hàng
                     </button>

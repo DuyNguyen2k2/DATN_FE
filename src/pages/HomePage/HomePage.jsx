@@ -20,7 +20,7 @@ export const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
   const searchDebounce = useDebounce(searchProduct, 500);;
   const [isLoadingSearch, setLoadingSearch] = useState(false);
-  const [limit, setLimit] = useState(5);
+  const [limit, setLimit] = useState(12);
   const [typeProducts, setTypeProducts] = useState([]);
 
   const fetchProducts = async (context) => {
@@ -47,8 +47,10 @@ export const HomePage = () => {
   });
 
   useEffect(() => {
+    setLoadingSearch(true);
     fetchAllType();
-  }, []);
+    setLoadingSearch(false);
+  }, [searchDebounce]);
 
   return (
     <div>
