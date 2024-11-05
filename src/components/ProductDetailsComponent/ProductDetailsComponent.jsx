@@ -1,14 +1,14 @@
 /* eslint-disable no-const-assign */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { Breadcrumb, Button, Col, Image, InputNumber, Rate, Row } from "antd";
+import { Breadcrumb, Button, Col, Image, InputNumber, notification, Rate, Row } from "antd";
 import { HomeOutlined, PlusOutlined, MinusOutlined } from "@ant-design/icons";
 import productImage from "../../assets/images/Iphone13.webp";
 import { ButtonComponent } from "../ButtonComponent/ButtonComponent";
 import * as ProductServices from "../../services/ProductServices";
 import { useQuery } from "react-query";
 import { Loading } from "../LoadingComponent/Loading";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import './style.css'; // Ensure this is included
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -16,6 +16,7 @@ import { addOrderProduct } from "../../redux/slices/orderSlice";
 import { convertPrice } from "../../utils";
 
 export const ProductDetailsComponent = ({ idProduct }) => {
+  const order = useSelector((state) => state.order)
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
@@ -62,23 +63,35 @@ export const ProductDetailsComponent = ({ idProduct }) => {
     if(!user?.id) {
       navigate('/sign-in', {state: location?.pathname})
     }else{
-      dispatch(addOrderProduct({
-        orderItem:{
-          name: productDetails?.name,
-          amount: numProducts,
-          image: productDetails?.image,
-          price: productDetails?.price,
-          product: productDetails?._id,
-          discount: productDetails?.discount,
-          countInStock: productDetails?.countInStock,
-        }
-      }))
+      if(order?.isSuccess) {
+        notification.open({
+          message: "Thêm vào giỏ hàng thành công",
+          type: "success",
+        });
+        dispatch(addOrderProduct({
+          orderItem:{
+            name: productDetails?.name,
+            amount: numProducts,
+            image: productDetails?.image,
+            price: productDetails?.price,
+            product: productDetails?._id,
+            discount: productDetails?.discount,
+            countInStock: productDetails?.countInStock,
+          }
+        }))
+      }
+      
     }
   }
   // console.log('product details', productDetails, user)
   const changAddress = () => {
     navigate('/user-profile')
   }
+
+  useEffect(() => {
+    console.log('Order state:', order);
+    
+  })
 
   return (
     <div className="container mx-auto px-2">

@@ -85,16 +85,18 @@ export const DetailsOrderPage = () => {
             {/* Hình thức giao hàng */}
             <div className="bg-white p-4 rounded-lg shadow">
               <h3 className="font-bold text-lg mb-2">Hình thức giao hàng</h3>
-              <p className="text-gray-600">FAST</p>
+              <span className="text-yellow-500 font-semibold text-xl">FAST {" "}</span>
+              <span>Giao hàng tiết kiệm</span>
+              <p>Phí giao hàng: <b><i>{convertPrice(data.shippingPrice)}</i></b></p>
             </div>
 
             {/* Hình thức thanh toán */}
             <div className="bg-white p-4 rounded-lg shadow">
               <h3 className="font-bold text-lg mb-2">Hình thức thanh toán</h3>
-              <p className="text-gray-600">
+              <p>
                 {orderContant.payment[data?.paymentMethod]}
               </p>
-              <p>{!data?.isPaid ? "Chưa thanh toán" : "Đã thanh toán"}</p>
+              <p className="text-yellow-500">{!data?.isPaid ? "Chưa thanh toán" : "Đã thanh toán"}</p>
             </div>
           </div>
 

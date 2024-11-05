@@ -134,7 +134,7 @@ export const MyOrderPage = () => {
     return data?.map((order) => {
       // Calculate total amount for each order
       // console.log("order id", order?._id);
-      console.log('order', order)
+      // console.log('order', order)
       return (
         <>
           {/* Order Item Section */}

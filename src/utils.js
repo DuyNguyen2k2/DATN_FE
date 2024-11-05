@@ -44,9 +44,15 @@ export const renderOptions = (arr) => {
 
 export const convertPrice = (price) => {
   try {
-    const result = price.toLocaleString().replaceAll(',', '.')
-    return `${result} VND`
+    // Format the price with a comma as the thousands separator and dot as the decimal point
+    const result = price.toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
+    return `${result} VND`;
   } catch (error) {
-    return null
+    return null;
   }
-}
+};
+
