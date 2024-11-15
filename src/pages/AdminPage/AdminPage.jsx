@@ -3,17 +3,22 @@ import {
   UserOutlined,
   ProductOutlined,
   PieChartOutlined,
+  // OrderedListOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { getItem } from "../../utils";
 import { Button, Col, Drawer, Menu, Row } from "antd";
 import { HeaderComponent } from "../../components/HeaderComponent/HeaderComponent";
 import { AdminUser } from "../../components/AdminUser/AdminUser";
 import { AdminProduct } from "../../components/AdminProduct/AdminProduct";
+import { AdminOrder } from "../../components/AdminOrder/AdminOrder";
+import { AdminDashboard } from "../../components/AdminDashboard/AdminDashboard";
 
 const items = [
   getItem("Dashboard", "dashboard", <PieChartOutlined />),
   getItem("Người dùng", "user", <UserOutlined />),
   getItem("Sản phẩm", "product", <ProductOutlined />),
+  getItem("Đơn hàng", "order", <ShoppingCartOutlined />),
   //   {
   //     key: "user",
   //     label: "Người dùng",
@@ -75,8 +80,10 @@ export const AdminPage = () => {
         return <AdminUser />;
       case "product":
         return <AdminProduct />;
+      case "order":
+        return <AdminOrder />; 
       default:
-        return <></>;
+        return <AdminDashboard />;
     }
   };
   const [keySelected, setKeySelected] = useState("");
@@ -107,25 +114,7 @@ export const AdminPage = () => {
                 defaultSelectedKeys={["dashboard"]}
                 defaultOpenKeys={["dashboard"]}
               />
-              <Button onClick={showDrawer} className="border-none">
-                <i className="fa-solid fa-bars"></i>
-              </Button>
-              <Drawer
-                placement="left"
-                onClose={onClose}
-                open={open}
-                key="left"
-                className="h-full w-max"
-              >
-                <Menu
-                  className="min-[770px]:hidden block"
-                  onClick={handleOnclick}
-                  mode="inline"
-                  items={items}
-                  defaultSelectedKeys={["dashboard"]}
-                  defaultOpenKeys={["dashboard"]}
-                />
-              </Drawer>
+              
             </div>
           </Col>
           <Col span={20}>

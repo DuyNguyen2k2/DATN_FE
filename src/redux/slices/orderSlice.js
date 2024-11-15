@@ -36,6 +36,7 @@ export const orderSlice = createSlice({
         if(itemOrder.amount <= itemOrder.countInStock){
           itemOrder.amount += orderItem.amount;
           state.isSuccess = true;
+          state.isError = false;
         }else{
           state.isError = true;
         }
@@ -43,6 +44,10 @@ export const orderSlice = createSlice({
       } else {
         state.orderItems.push(orderItem);
       }
+    },
+    resetOrder: (state) => {
+      state.isSuccess = false;
+      state.isError = false;
     },
     increAmount: (state, action) => {
       const { idProduct } = action.payload;
@@ -130,6 +135,7 @@ export const {
   removeOrderProduct,
   removeAllOrderProduct,
   selectedOrder,
+  resetOrder,
 } = orderSlice.actions;
 
 export default orderSlice.reducer;

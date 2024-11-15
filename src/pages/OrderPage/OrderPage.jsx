@@ -297,7 +297,7 @@ export const OrderPage = ({ count = 1 }) => {
 
               {/* List Product Section */}
               {order?.orderItems?.map((order) => {
-                console.log("checkOrder", order?.countInStock);
+                // console.log("checkOrder", order?.countInStock);
                 return (
                   <>
                     <div className="list-product flex justify-between items-center bg-white p-3 rounded-md">
