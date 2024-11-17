@@ -70,7 +70,7 @@ export const CardComponent = (props) => {
         </div>
 
         <div className="flex justify-between items-center">
-          <span className="font-bold text-lg text-red-500">
+          <span className="font-bold text-base text-red-500">
             {convertPrice(price - price * (discount / 100))}{" "}
           </span>
           {discount > 0 && <span className="text-red-500"> -{discount}% </span>}

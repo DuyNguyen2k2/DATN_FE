@@ -59,7 +59,6 @@ export const AdminProduct = () => {
     type: "",
     discount: "",
     image: "",
-    rating: "",
     newType: "",
   })
 
@@ -76,7 +75,6 @@ export const AdminProduct = () => {
       type,
       discount,
       image,
-      rating,
     } = data;
     const res = ProductServices.createProduct({
       name,
@@ -86,7 +84,6 @@ export const AdminProduct = () => {
       type,
       discount,
       image,
-      rating,
     });
     return res;
   });
@@ -132,7 +129,6 @@ export const AdminProduct = () => {
       name: stateProduct.name,
       price: stateProduct.price,
       description: stateProduct.description,
-      rating: stateProduct.rating,
       image: stateProduct.image,
       countInStock: stateProduct.countInStock,
       type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
@@ -555,7 +551,7 @@ export const AdminProduct = () => {
       ...getColumnSearchProps("countInStock"),
     },
     {
-      title: "Rating",
+      title: "Rate",
       dataIndex: "rating",
       key: "rating",
       width: 150,
@@ -833,36 +829,6 @@ export const AdminProduct = () => {
                 />
               </Form.Item>
 
-              <Form.Item
-                label="Rating"
-                name="rating"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input rating!",
-                  },
-                  {
-                    pattern: /^(\d+(\.\d*)?|\.\d+)$/,
-                    message: "Rating must be a number!",
-                  },
-                  {
-                    validator: (_, value) =>
-                      value >= 0 && value <= 5
-                        ? Promise.resolve()
-                        : Promise.reject(
-                            new Error("Rating must be between 0 and 5")
-                          ),
-                  },
-                ]}
-              >
-                <InputComponent
-                  className=""
-                  name="rating"
-                  value={stateProduct.rating}
-                  onChange={handleOnChange}
-                />
-              </Form.Item>
-
               <Form.Item label="Image" name="image">
                 <div className="flex gap-2">
                   <div className="">
@@ -1087,36 +1053,6 @@ export const AdminProduct = () => {
                   value={stateProductDetails["discount"]}
                   onChange={handleOnChangeDetails}
                   addonAfter="%"
-                />
-              </Form.Item>
-
-              <Form.Item
-                label="Rating"
-                name="rating"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input rating!",
-                  },
-                  {
-                    pattern: /^[0-9]+$/,
-                    message: "Rating must be a number!",
-                  },
-                  {
-                    validator: (_, value) =>
-                      value >= 0 && value <= 5
-                        ? Promise.resolve()
-                        : Promise.reject(
-                            new Error("Rating must be between 0 and 5")
-                          ),
-                  },
-                ]}
-              >
-                <InputComponent
-                  className=""
-                  name="rating"
-                  value={stateProductDetails["rating"]}
-                  onChange={handleOnChangeDetails}
                 />
               </Form.Item>
 
