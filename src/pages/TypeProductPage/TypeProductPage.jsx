@@ -58,12 +58,15 @@ export const TypeProductPage = () => {
                   href: "/",
                   title: <HomeOutlined />,
                 },
+                {
+                  title: `${state}`
+                }
                 
               ]}
             />
           </div>
         <Row>
-          <Col span={4} className="bg-[#fff] rounded h-max p-3 mb-5">
+          <Col xs={24} md={4} className="bg-[#fff] rounded h-max p-3 mb-5">
             <NavBarComponent />
           </Col>
           <Col span={20}>

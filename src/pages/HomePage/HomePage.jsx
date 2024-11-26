@@ -18,7 +18,7 @@ import { useDebounce } from "../../hooks/useDebounce";
 
 export const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
-  const searchDebounce = useDebounce(searchProduct, 500);;
+  const searchDebounce = useDebounce(searchProduct, 500);
   const [isLoadingSearch, setLoadingSearch] = useState(false);
   const [limit, setLimit] = useState(12);
   const [typeProducts, setTypeProducts] = useState([]);
@@ -37,14 +37,15 @@ export const HomePage = () => {
     }
   };
 
-  const {
-    isLoading,
-    data: products,
-  } = useQuery(["products", limit, searchDebounce], fetchProducts, {
-    retry: 3,
-    retryDelay: 500,
-    keepPreviousData: true,
-  });
+  const { isLoading, data: products } = useQuery(
+    ["products", limit, searchDebounce],
+    fetchProducts,
+    {
+      retry: 3,
+      retryDelay: 500,
+      keepPreviousData: true,
+    }
+  );
 
   useEffect(() => {
     setLoadingSearch(true);
@@ -56,7 +57,7 @@ export const HomePage = () => {
     <div>
       <Loading isLoading={isLoadingSearch || isLoading}>
         <div className="container-2xl shadow bg-white">
-          <div className="container mx-auto flex items-center gap-6 h-[44px] px-2">
+          <div className="container mx-auto flex flex-wrap items-center h-auto px-2">
             {typeProducts.map((item) => (
               <TypeProduct name={item} key={item} />
             ))}
@@ -65,18 +66,14 @@ export const HomePage = () => {
         <div className="bg-[#efefef]">
           <div className="container mx-auto">
             <SliderComponent
-              arrImages={[
-                Slider1,
-                Slider2,
-                Slider3,
-                Slider4,
-                Slider5,
-                Slider6,
-              ]}
+              arrImages={[Slider1, Slider2, Slider3, Slider4, Slider5, Slider6]}
             />
-            <div className="mt-10 flex max-md:justify-center max-md:items-center md:gap-7 flex-wrap">
+            <div className="p-2 mt-10 flex max-md:justify-center max-md:items-center md:gap-7 flex-wrap">
               {products?.data.map((product) => (
-                <div className="flex justify-center items-center" key={product._id}>
+                <div
+                  className="flex justify-center items-center"
+                  key={product._id}
+                >
                   <CardComponent
                     countInStock={product.countInStock}
                     description={product.description}

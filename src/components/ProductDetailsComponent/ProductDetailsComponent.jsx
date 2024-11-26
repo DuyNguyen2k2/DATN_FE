@@ -217,6 +217,9 @@ export const ProductDetailsComponent = ({ idProduct }) => {
 
       setUploadedImage([]); // Reset uploaded ảnh sau khi gửi
       setNewReview(reviewData); // Cập nhật review để hiển thị trên UI
+      setTimeout(() => {
+        fetchReviews();
+      }, 1000);
     } catch (error) {
       notification.error({
         message: "Lỗi khi gửi đánh giá",
@@ -262,6 +265,7 @@ export const ProductDetailsComponent = ({ idProduct }) => {
         message.success("Cập nhật đánh giá thành công!");
         setEditModalVisible(false); // Close modal
         // Optionally, you can refresh the review list after update.
+        fetchReviews();
       } else {
         message.error("Cập nhật đánh giá thất bại!");
       }
@@ -308,6 +312,7 @@ export const ProductDetailsComponent = ({ idProduct }) => {
       <Loading isLoading={isLoading}>
         {productDetails && (
           <>
+            {/* Breadcrumb */}
             <div className="py-2 w-full truncate">
               <Breadcrumb
                 items={[
@@ -321,41 +326,52 @@ export const ProductDetailsComponent = ({ idProduct }) => {
                 ]}
               />
             </div>
-            <Row className="bg-[#fff] mt-2 rounded-md p-5 hidden sm:flex">
-              <Col span={10} className="border-r">
-                <Image src={productDetails.image} preview={false} />
-                <div className="flex">
-                  <Image src={productDetails.image} preview={false} />
-                  <Image src={productDetails.image} preview={false} />
-                  <Image src={productDetails.image} preview={false} />
-                  <Image src={productDetails.image} preview={false} />
-                  <Image src={productDetails.image} preview={false} />
-                  <Image src={productDetails.image} preview={false} />
+
+            {/* Product Details */}
+            <div className="bg-white mt-2 rounded-md p-5 flex flex-col lg:flex-row">
+              {/* Left Column */}
+              <div className="lg:w-2/5 border-b lg:border-b-0 lg:border-r pb-5 lg:pb-0 lg:pr-5">
+                <Image
+                  src={productDetails.image}
+                  preview={false}
+                  className="w-full"
+                />
+                <div className="flex mt-2 gap-2 overflow-x-auto">
+                  {[...Array(6)].map((_, idx) => (
+                    <Image
+                      key={idx}
+                      src={productDetails.image}
+                      preview={false}
+                      className="w-16 h-16 object-cover rounded"
+                    />
+                  ))}
                 </div>
-              </Col>
-              <Col span={14}>
+              </div>
+
+              {/* Right Column */}
+              <div className="lg:w-3/5 lg:pl-5">
                 <div className="p-3 rounded">
-                  <p className="text-2xl font-semibold break-words">
+                  <p className="text-xl md:text-2xl font-semibold break-words">
                     {productDetails.name}
                   </p>
-                  <div className="mt-2 text-xl">
+                  <div className="mt-2 text-sm md:text-lg">
                     <span className="">
-                      <StarOutlined className="text-yellow-500" />{" "}
-                      {productDetails.rating || 0}/5
+                      {productDetails.rating || 0}/5{" "}
+                      <i
+                        className="fa-solid fa-star"
+                        style={{ color: "#FFD43B" }}
+                      ></i>
                     </span>
-                    <span>
-                      {" "}
-                      ({productDetails.review_count || 0} đánh giá ){" "}
-                    </span>
+                    <span> ({productDetails.review_count || 0} đánh giá)</span>
                     <span> | </span>
                     <span>Đã bán {productDetails.selled || 0}</span>
                   </div>
-                  <div className="bg-[#FAFAFA] rounded font-bold text-2xl p-3 mt-5">
-                    <p>{convertPrice(productDetails?.price)} </p>
+                  <div className="bg-gray-100 rounded font-bold text-lg md:text-2xl p-3 mt-5">
+                    {convertPrice(productDetails?.price)}
                   </div>
-                  <div className="p-5 mt-2 border-b border-t">
-                    <span className="text-xl font-bold">Giao đến: </span>
-                    <span className="text-xl">
+                  <div className="p-5 mt-2 border-t">
+                    <span className="text-lg font-bold">Giao đến:</span>
+                    <span className="text-lg">
                       <i>
                         {user?.address +
                           ", " +
@@ -374,9 +390,9 @@ export const ProductDetailsComponent = ({ idProduct }) => {
                       </b>
                     </span>
                   </div>
-                  <div className="p-5 mt-2 border-b">
+                  <div className="p-5 mt-2 border-t">
                     <p className="text-lg">Số Lượng</p>
-                    <div className="mt-2 flex items-center mb-2">
+                    <div className="mt-2 flex items-center gap-2">
                       <Button onClick={decrement} className="custom-button">
                         <MinusOutlined />
                       </Button>
@@ -384,16 +400,16 @@ export const ProductDetailsComponent = ({ idProduct }) => {
                         onChange={onChange}
                         value={numProducts}
                         min={1}
-                        className="rounded custom-input-number"
+                        className="w-20 rounded custom-input-number"
                       />
                       <Button onClick={increment} className="custom-button">
                         <PlusOutlined />
                       </Button>
                     </div>
                   </div>
-                  <div className="mt-10 flex gap-5">
+                  <div className="mt-10 flex flex-col lg:flex-row gap-5">
                     <ButtonComponent
-                      className="rounded w-[200px]"
+                      className="rounded w-full lg:w-auto"
                       danger
                       type="primary"
                       textButton="Chọn Mua"
@@ -401,18 +417,28 @@ export const ProductDetailsComponent = ({ idProduct }) => {
                       onClick={handleAddOrderProduct}
                     />
                     <ButtonComponent
-                      className="rounded w-[200px]"
+                      className="rounded w-full lg:w-auto"
                       textButton="Mua Trước Trả Sau"
                       size="large"
                     />
                   </div>
                 </div>
-              </Col>
-            </Row>
+              </div>
+            </div>
 
-            {/* Review Section */}
+            {/* Product Description */}
             <div className="mt-10 bg-white p-5 rounded-md">
-              <h3 className="text-xl font-semibold">Đánh giá sản phẩm</h3>
+              <h1 className="text-lg md:text-xl font-bold">Mô tả sản phẩm</h1>
+              <p className="text-sm md:text-base">
+                {productDetails?.description}
+              </p>
+            </div>
+
+            {/* Reviews */}
+            <div className="mt-10 bg-white p-5 rounded-md">
+              <h3 className="text-lg md:text-xl font-semibold">
+                Đánh giá sản phẩm
+              </h3>
               <Form
                 onFinish={handleReviewSubmit}
                 layout="vertical"
@@ -444,8 +470,8 @@ export const ProductDetailsComponent = ({ idProduct }) => {
                   <Upload
                     listType="picture"
                     onChange={handleImageChange}
-                    accept="image/*" // Chỉ nhận file ảnh
-                    multiple // Cho phép tải lên nhiều ảnh
+                    accept="image/*"
+                    multiple
                   >
                     <Button icon={<UploadOutlined />}>Tải lên ảnh</Button>
                   </Upload>
@@ -456,151 +482,160 @@ export const ProductDetailsComponent = ({ idProduct }) => {
               </Form>
             </div>
 
-            {/* Hiển thị đánh giá */}
-            <div className="mt-2 flex items-center justify-between">
-              <h3 className="text-xl font-semibold">Các đánh giá</h3>
-              <p>Tất cả đánh giá ({productDetails.review_count || 0})</p>
-            </div>
-            <div className="mt-5 bg-white">
-              {isLoadingReviews ? (
-                <p>Đang tải đánh giá...</p>
-              ) : reviews.length > 0 ? (
-                reviews.map((review) => (
-                  <div key={review._id} className="mt-5 p-3 border rounded-md">
-                    <div className="flex items-center gap-3">
-                      <Image
-                        width={50}
-                        src={
-                          review.user_id.avatar ||
-                          "https://static.vecteezy.com/system/resources/previews/021/548/095/non_2x/default-profile-picture-avatar-user-avatar-icon-person-icon-head-icon-profile-picture-icons-default-anonymous-user-male-and-female-businessman-photo-placeholder-social-network-avatar-portrait-free-vector.jpg"
-                        }
-                        className="rounded-full"
-                        preview={false}
-                      />
-                      <span className="font-bold">{review.user_id.name}</span>
-                    </div>
-                    <Rate
-                      disabled
-                      defaultValue={review.rating}
-                      allowHalf
-                      className="mt-2"
-                    />
-                    <p className="mt-2">{review.content}</p>
-                    {review.images?.length > 0 && (
-                      <div className="mt-2 flex gap-2 items-center">
-                        {review.images.map((img, index) => (
-                          <Image key={index} src={img} width={100} />
-                        ))}
+            {/* Reviews List */}
+            <div className="mt-5 bg-white p-5 rounded-md">
+              <div className="mt-2 flex items-center justify-between">
+                <h3 className="text-xl font-semibold">Các đánh giá</h3>
+                <p>Tất cả đánh giá ({productDetails.review_count || 0})</p>
+              </div>
+              <div className="mt-2">
+                {isLoadingReviews ? (
+                  <p>Đang tải đánh giá...</p>
+                ) : reviews.length > 0 ? (
+                  reviews.map((review) => (
+                    <div
+                      key={review._id}
+                      className="mt-5 p-3 border rounded-md text-sm md:text-base"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Image
+                          width={50}
+                          src={
+                            review.user_id.avatar ||
+                            "https://th.bing.com/th/id/OIP.XXbgSKiEDzYZDqZQ4hYfvQHaHu?rs=1&pid=ImgDetMain"
+                          }
+                          className="rounded-full"
+                          preview={false}
+                        />
+                        <span className="font-bold">{review.user_id.name}</span>
                       </div>
-                    )}
-                    <div className="text-xl flex justify-end">
-                      {/* Nếu user là chủ sở hữu đánh giá */}
-                      {review.user_id._id === user.id && (
-                        <>
+                      <Rate
+                        disabled
+                        defaultValue={review.rating}
+                        allowHalf
+                        className="mt-2"
+                      />
+                      <p className="mt-2">{review.content}</p>
+                      {review.images?.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2 items-center">
+                          {review.images.map((img, index) => (
+                            <Image key={index} src={img} width={100} />
+                          ))}
+                        </div>
+                      )}
+                      <div className="text-xl flex justify-end">
+                        {/* Nếu user là chủ sở hữu đánh giá */}
+                        {review.user_id._id === user.id && (
+                          <>
+                            <span
+                              className="text-white bg-blue-400 cursor-pointer p-1 border flex items-center rounded"
+                              onClick={() => handleEditReview(review)}
+                            >
+                              <EditFilled />
+                            </span>
+                          </>
+                        )}
+                        {/* Icon xóa: Luôn hiển thị nếu user là admin hoặc là chủ sở hữu đánh giá */}
+                        {(user.isAdmin || review.user_id._id === user.id) && (
                           <span
-                            className="text-white bg-blue-400 cursor-pointer p-1 border flex items-center rounded"
-                            onClick={() => handleEditReview(review)}
+                            className="text-white bg-red-400 cursor-pointer ml-2 p-1 border flex items-center rounded"
+                            onClick={() => showDeleteModal(review._id)}
                           >
-                            <EditFilled />
+                            <DeleteFilled />
                           </span>
-                        </>
-                      )}
-                      {/* Icon xóa: Luôn hiển thị nếu user là admin hoặc là chủ sở hữu đánh giá */}
-                      {(user.isAdmin || review.user_id._id === user.id) && (
-                        <span
-                          className="text-white bg-red-400 cursor-pointer ml-2 p-1 border flex items-center rounded"
-                          onClick={() => showDeleteModal(review._id)}
+                        )}
+                        <Modal
+                          title="Xác nhận xóa đánh giá"
+                          open={deleteModalVisible}
+                          onOk={() =>
+                            handleDeleteReview(selectedReviewToDelete)
+                          }
+                          onCancel={handleCancelDelete}
+                          okText="Xóa"
+                          cancelText="Hủy"
+                          cancelButtonProps={{ danger: true }}
+                          styles={{
+                            mask: { backgroundColor: "rgba(0, 0, 0, 0.1)" }, // Điều chỉnh độ mờ của lớp nền
+                          }}
                         >
-                          <DeleteFilled />
-                        </span>
-                      )}
+                          <p className="text-xl text-red-500">
+                            Bạn có chắc chắn muốn xóa đánh giá này không?
+                          </p>
+                        </Modal>
+                      </div>
                       <Modal
-                        title="Xác nhận xóa đánh giá"
-                        open={deleteModalVisible}
-                        onOk={() => handleDeleteReview(selectedReviewToDelete)}
-                        onCancel={handleCancelDelete}
-                        okText="Xóa"
-                        cancelText="Hủy"
-                        cancelButtonProps={{ danger: true }}
+                        title="Chỉnh sửa đánh giá"
+                        open={editModalVisible}
+                        onCancel={() => setEditModalVisible(false)}
                         styles={{
                           mask: { backgroundColor: "rgba(0, 0, 0, 0.1)" }, // Điều chỉnh độ mờ của lớp nền
                         }}
+                        footer={null}
                       >
-                        <p className="text-xl text-red-500">Bạn có chắc chắn muốn xóa đánh giá này không?</p>
+                        <Form
+                          form={form}
+                          layout="vertical"
+                          onFinish={handleUpdateReview} // Add onFinish handler
+                        >
+                          <Form.Item
+                            label="Số sao:"
+                            name="rating"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Vui lòng chọn số sao!",
+                              },
+                            ]}
+                          >
+                            <Rate allowHalf />
+                          </Form.Item>
+                          <Form.Item
+                            label="Nội dung đánh giá:"
+                            name="comment"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Vui lòng nhập nội dung đánh giá!",
+                              },
+                            ]}
+                          >
+                            <Input.TextArea rows={4} />
+                          </Form.Item>
+                          {selectedReview?.images?.length > 0 && (
+                            <div>
+                              <h4>Danh sách ảnh đánh giá:</h4>
+                              <div className="image-list flex gap-2 items-center">
+                                {selectedReview.images.map((image, index) => (
+                                  <div key={index} className="image-item">
+                                    <Image
+                                      src={image}
+                                      alt=""
+                                      width={100}
+                                      height={100}
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Upload mới ảnh */}
+                          <Button type="primary" htmlType="submit">
+                            Cập nhật
+                          </Button>
+                        </Form>
                       </Modal>
                     </div>
-                    <Modal
-                      title="Chỉnh sửa đánh giá"
-                      open={editModalVisible}
-                      onCancel={() => setEditModalVisible(false)}
-                      styles={{
-                        mask: { backgroundColor: "rgba(0, 0, 0, 0.1)" }, // Điều chỉnh độ mờ của lớp nền
-                      }}
-                      footer={null}
-                    >
-                      <Form
-                        form={form}
-                        layout="vertical"
-                        onFinish={handleUpdateReview} // Add onFinish handler
-                      >
-                        <Form.Item
-                          label="Số sao:"
-                          name="rating"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng chọn số sao!",
-                            },
-                          ]}
-                        >
-                          <Rate allowHalf />
-                        </Form.Item>
-                        <Form.Item
-                          label="Nội dung đánh giá:"
-                          name="comment"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Vui lòng nhập nội dung đánh giá!",
-                            },
-                          ]}
-                        >
-                          <Input.TextArea rows={4} />
-                        </Form.Item>
-                        {selectedReview?.images?.length > 0 && (
-                          <div>
-                            <h4>Danh sách ảnh đánh giá:</h4>
-                            <div className="image-list flex gap-2 items-center">
-                              {selectedReview.images.map((image, index) => (
-                                <div key={index} className="image-item">
-                                  <Image
-                                    src={image}
-                                    alt={`Image ${index}`}
-                                    width={100}
-                                    height={100}
-                                  />
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Upload mới ảnh */}
-                        <Button type="primary" htmlType="submit">
-                          Cập nhật
-                        </Button>
-                      </Form>
-                    </Modal>
-                  </div>
-                ))
-              ) : (
-                <p className="p-2">Chưa có đánh giá nào.</p>
-              )}
+                  ))
+                ) : (
+                  <p className="p-2">Chưa có đánh giá nào.</p>
+                )}
+              </div>
             </div>
 
-            {/* Phân trang */}
+            {/* Pagination */}
             <Pagination
-              className="py-5 flex items justify-center"
+              className="py-5 flex items-center justify-center"
               current={currentPage}
               pageSize={pageSize}
               total={totalReviews}

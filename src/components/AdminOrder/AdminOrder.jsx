@@ -156,6 +156,25 @@ export const AdminOrder = () => {
     //   ),
   });
   // console.log('order', orders)
+  const handleConfirmDelivery = async (orderId) => {
+    setIsLoadingUpdate(true);
+    try {
+      // Giả sử có một API để cập nhật trạng thái đơn hàng
+      const res = await OrderServices.updateOrderStatus(orderId, user?.access_token, { isPaid: true, isDelivered: true });
+      console.log('res', res)
+      if (res.status === "OK") {
+        messageApi.success("Đơn hàng đã được xác nhận giao hàng.");
+        // Cập nhật lại dữ liệu sau khi xác nhận giao hàng thành công
+        queryOrders.refetch(); // Nếu dùng react-query
+      } else {
+        messageApi.error("Không thể xác nhận giao hàng.");
+      }
+    } catch (error) {
+      messageApi.error("Đã xảy ra lỗi khi xác nhận giao hàng.");
+    } finally {
+      setIsLoadingUpdate(false);
+    }
+  };
   const columns = [
     {
       title: "#",
@@ -281,7 +300,6 @@ export const AdminOrder = () => {
       dataIndex: "isPaid",
       key: "isPaid",
       width: 150,
-      fixed: "right",
       render: (text) => `${text ? "Đã thanh toán" : "Chưa thanh toán"} `,
       ...getColumnSearchProps("isPaid"),
     },
@@ -299,8 +317,26 @@ export const AdminOrder = () => {
       },
       ...getColumnSearchProps("createdAt"),
     },
-    
-    
+    {
+      title: "Confirm Delivery",
+      key: "confirmDelivery",
+      width: 200,
+      fixed: "right",
+      render: (text, record) => {
+        // Chỉ hiển thị nút khi đơn hàng chưa giao (isDelivered === false)
+        return !record.isDelivered ? (
+          <Button
+            type="primary"
+            onClick={() => handleConfirmDelivery(record._id)}
+            disabled={isLoadingUpdate} // Disable khi đang cập nhật
+          >
+            Xác nhận giao hàng
+          </Button>
+        ) : (
+          "Đã giao hàng"
+        );
+      },
+    },
     // {
     //   title: "Action",
     //   key: "action",

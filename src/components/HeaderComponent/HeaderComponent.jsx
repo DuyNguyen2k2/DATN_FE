@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
-import { Badge, Col, Image, Popover, Row } from "antd";
+import { Badge, Col, Image, notification, Popover, Row } from "antd";
 import { ButtonInputSearch } from "../ButtonInputSearch/ButtonInputSearch";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -97,9 +97,9 @@ export const HeaderComponent = ({
   return (
     <div className="bg-[#1a94ff]">
       <Row className="container mx-auto p-3 flex flex-wrap justify-between items-center">
-        <Col xs={24} sm={12} md={6} className="text-center md:text-left">
+        <Col xs={24} sm={24} md={4} className="text-center md:text-left mb-1">
           <h1
-            className="cursor-pointer hover:text-cyan-400 text-3xl font-bold text-white"
+            className="cursor-pointer hover:text-cyan-400 text-xl sm:text-2xl md:text-3xl font-bold text-white truncate"
             onClick={() => navigate("/")}
           >
             TECHTROVEDECOR
@@ -107,7 +107,7 @@ export const HeaderComponent = ({
         </Col>
 
         {!isHiddenSearch && (
-          <Col xs={24} sm={12} md={12} className="px-2">
+          <Col xs={24} sm={24} md={12} className="px-2 mb-1">
             <ButtonInputSearch
               size="large"
               textButton="Tìm kiếm"
@@ -120,9 +120,9 @@ export const HeaderComponent = ({
 
         <Col
           xs={24}
-          sm={12}
-          md={6}
-          className="text-white flex justify-center md:justify-end items-center mt-2 md:mt-0"
+          sm={24}
+          md={8}
+          className=" text-white flex justify-center md:justify-end items-center"
         >
           <div className="flex justify-start items-center">
             {user?.access_token ? (
@@ -167,11 +167,20 @@ export const HeaderComponent = ({
           </Loading>
           {!isHiddenCart && (
             <div
-              onClick={() => navigate("/order")}
+              onClick={() => {
+                if (user?.access_token) {
+                  navigate("/order");
+                } else {
+                  notification.warning({
+                    message: "Hãy đăng nhập để tiếp tục",
+                    description: "Bạn cần đăng nhập để xem giỏ hàng của mình.",
+                  });
+                }
+              }}
               className="cursor-pointer xl:px-5 flex items-center"
             >
               <Badge
-                count={order?.orderItems?.length}
+                count={user?.access_token ? order?.orderItems?.length : 0}
                 size="small"
                 showZero
               >

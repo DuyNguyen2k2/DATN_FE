@@ -14,6 +14,7 @@ import * as OrderServices from "../../services/OrderServices";
 import * as PaymentServices from "../../services/PaymentServices";
 import { Loading } from "../../components/LoadingComponent/Loading";
 import { removeAllOrderProduct } from "../../redux/slices/orderSlice";
+import { PayPalButtons } from "@paypal/react-paypal-js";
 import { PayPalButton } from "react-paypal-button-v2";
 
 // eslint-disable-next-line react/prop-types
@@ -91,6 +92,12 @@ export const PaymentPage = () => {
     );
   }, [tempPrice, discountOrder, discountOrder]);
 
+  const mutationAddOrder = useMutationHooks((data) => {
+    const { token, ...rests } = data;
+    const res = OrderServices.createOrder(token, { ...rests });
+    return res;
+  });
+
   const handleAddOrder = () => {
     if (
       user?.access_token &&
@@ -123,11 +130,7 @@ export const PaymentPage = () => {
     }
   };
 
-  const mutationAddOrder = useMutationHooks((data) => {
-    const { token, ...rests } = data;
-    const res = OrderServices.createOrder(token, { ...rests });
-    return res;
-  });
+
 
   const { isLoading, data } = mutationAddOrder;
 
@@ -158,12 +161,14 @@ export const PaymentPage = () => {
     } else if (data?.status === "ERR") {
       notification.error({
         message: "Đặt hàng không thành công",
+        description: data?.message,
       });
     }
   }, [data]);
 
   const addPayPalScript = async () => {
     const {data} = await PaymentServices.getConfig()
+    console.log('data', data)
     const script = document.createElement("script")
     script.type = "text/javascript"
     script.src = `https://sandbox.paypal.com/sdk/js?client-id=${data}`
@@ -197,10 +202,11 @@ export const PaymentPage = () => {
       shippingPrice: Number(deliveryPrice),
       totalPrice: totalPrice,
       user: user?.id,
+      email: user?.email,
       isPaid: true,
       paidAt: details.update_time,
     });
-    console.log('details, data', details, data)
+    // console.log('details, data', details, data)
   }
 
   return (

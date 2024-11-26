@@ -36,7 +36,6 @@ export const MyOrderPage = () => {
     }
   };
 
-
   const queryOrders = useQuery(["user-orders"], fetchMyOrders, {
     enabled: !!state?.token && !!state?.id,
     retry: false,
@@ -89,17 +88,17 @@ export const MyOrderPage = () => {
   };
 
   const mutation = useMutationHooks((data) => {
-    const {token, id, orderItems} = data
-    const res = OrderServives.cancelOrders(token, id, orderItems)
-    return res
-  })
+    const { token, id, orderItems } = data;
+    const res = OrderServives.cancelOrders(token, id, orderItems);
+    return res;
+  });
 
   const handleCancelOrders = (order) => {
     if (!state?.token) {
       console.error("Token is missing in handleCancelOrders");
       return;
     }
-  
+
     mutation.mutate(
       { token: state.token, id: order._id, orderItems: order?.orderItems },
       {
@@ -112,23 +111,22 @@ export const MyOrderPage = () => {
       }
     );
   };
-  
 
-  const {isLoading: isLoadingCancel, data: dataCancel} = mutation
+  const { isLoading: isLoadingCancel, data: dataCancel } = mutation;
 
   useEffect(() => {
-    if(dataCancel?.status === 'OK'){
+    if (dataCancel?.status === "OK") {
       notification.open({
         message: dataCancel?.message,
         type: "success",
       });
-    }else if(dataCancel?.status === 'ERR'){
+    } else if (dataCancel?.status === "ERR") {
       notification.open({
         message: dataCancel?.message,
         type: "error",
       });
     }
-  }, [dataCancel])
+  }, [dataCancel]);
 
   const renderProduct = (data) => {
     return data?.map((order) => {
@@ -186,74 +184,89 @@ export const MyOrderPage = () => {
             />
           </div>
 
-          {data?.map((order) => {
-            const orderTotal = order?.orderItems?.reduce(
-              (sum, item) => sum + (item.price || 0), // Ensure item.price is valid
-              0
-            );
-            // console.log("orderTotal", orderTotal);
-            return (
-              <div
-                key={order?.products}
-                className="bg-white shadow-[5px_5px_15px_rgba(0,0,0,0.1)] p-4 sm:p-6 rounded-lg transition-shadow duration-300 hover:shadow-[10px_10px_20px_rgba(0,0,0,0.15)] mb-6"
-              >
-                {/* Order Status Section */}
-                <div className="pb-4 mb-4">
-                  <h1 className="font-bold text-base sm:text-lg mb-2 text-gray-800">
-                    Trạng thái
-                  </h1>
-                  <p className="text-gray-600 text-sm sm:text-base">
-                    <span>
-                      Giao hàng:{" "}
-                      <strong className="text-red-500">Chưa giao hàng</strong>
+          {/* Kiểm tra nếu không có đơn hàng */}
+          {data && data.length > 0 ? (
+            data.map((order) => {
+              const orderTotal = order?.orderItems?.reduce(
+                (sum, item) => sum + (item.price || 0), // Đảm bảo item.price hợp lệ
+                0
+              );
+              // console.log('order', order)
+              return (
+                <div
+                  key={order?._id}
+                  className="bg-white shadow-[5px_5px_15px_rgba(0,0,0,0.1)] p-4 sm:p-6 rounded-lg transition-shadow duration-300 hover:shadow-[10px_10px_20px_rgba(0,0,0,0.15)] mb-6"
+                >
+                  {/* Phần trạng thái đơn hàng */}
+                  <div className="pb-4 mb-4">
+                    <h1 className="font-bold text-base sm:text-lg mb-2 text-gray-800">
+                      Trạng thái
+                    </h1>
+                    <p className="text-gray-600 text-sm sm:text-base">
+                      <span>
+                        Giao hàng:{" "}
+                        <strong className="text-red-500">{order?.isDelivered ? "Đã giao hàng" : "Chưa giao hàng"}</strong>
+                      </span>
+                    </p>
+                    <p className="text-gray-600 text-sm sm:text-base">
+                      <span>
+                        Thanh toán:{" "}
+                        <strong className="text-red-500">
+                          {order?.isPaid ? "Đã thanh toán" : "Chưa thanh toán"}
+                        </strong>
+                      </span>
+                    </p>
+                  </div>
+                  {renderProduct(order?.orderItems)}
+                  {/* Các nút hành động */}
+                  <div className="flex flex-col sm:flex-row justify-between items-center pt-4 mb-5">
+                    <span className="text-gray-600 text-xs sm:text-sm">
+                      Mã đơn hàng: {order?._id}
                     </span>
-                  </p>
-                  <p className="text-gray-600 text-sm sm:text-base">
-                    <span>
-                      Thanh toán:{" "}
-                      <strong className="text-red-500">Chưa thanh toán</strong>
+                    <div className="flex gap-2 sm:gap-4 mt-4 sm:mt-0">
+                      <button
+                        onClick={() => handleDetailsOrder(order?._id)}
+                        className="bg-blue-600 text-white text-xs sm:text-base py-2 px-3 sm:px-4 rounded-md hover:bg-blue-500 transition"
+                      >
+                        Xem Chi Tiết
+                      </button>
+                      {!order?.isDelivered && (
+                      <button
+                        className="bg-red-600 text-white text-xs sm:text-base py-2 px-3 sm:px-4 rounded-md hover:bg-red-500 transition"
+                        onClick={() => handleCancelOrders(order)}
+                      >
+                        Hủy Đơn Hàng
+                      </button>
+                    )}
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center border-t pt-4 mb-4">
+                    <span className="text-gray-800 text-base font-bold">
+                      Tổng tiền đơn hàng:
                     </span>
-                  </p>
-                </div>
-                {renderProduct(order?.orderItems)}
-                {/* Buttons Section */}
-                <div className="flex flex-col sm:flex-row justify-between items-center pt-4 mb-5">
-                  <span className="text-gray-600 text-xs sm:text-sm">
-                    Mã đơn hàng: {order?._id}
-                  </span>
-                  <div className="flex gap-2 sm:gap-4 mt-4 sm:mt-0">
-                    <button
-                      onClick={() => handleDetailsOrder(order?._id)}
-                      className="bg-blue-600 text-white text-xs sm:text-base py-2 px-3 sm:px-4 rounded-md hover:bg-blue-500 transition"
-                    >
-                      Xem Chi Tiết
-                    </button>
-                    <button
-                      className="bg-red-600 text-white text-xs sm:text-base py-2 px-3 sm:px-4 rounded-md hover:bg-red-500 transition"
-                      onClick={() => handleCancelOrders(order)}
-                    >
-                      Hủy Đơn Hàng
-                    </button>
+                    <span className="text-lg font-semibold text-red-600">
+                      {convertPrice(orderTotal)}
+                    </span>
                   </div>
                 </div>
-                <div className="flex justify-between items-center border-t pt-4 mb-4">
-                  <span className="text-gray-800 text-base font-bold">
-                    Tổng tiền đơn hàng:
-                  </span>
-                  <span className="text-lg font-semibold text-red-600">
-                    {convertPrice(orderTotal)}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div className="bg-white shadow-md p-4 rounded-lg mt-6 mb-6 text-center">
+              <h2 className="font-bold text-lg text-gray-800">
+                Bạn chưa có đơn hàng nào
+              </h2>
+            </div>
+          )}
 
           {/* Hiển thị tổng tiền */}
-          <div className="bg-white shadow-md p-4 rounded-lg mt-6 mb-6">
-            <h2 className="font-bold text-lg text-gray-800">
-              Tổng tiền: {convertPrice(totalAmount)}
-            </h2>
-          </div>
+          {data && data.length > 0 && (
+            <div className="bg-white shadow-md p-4 rounded-lg mt-6 mb-6">
+              <h2 className="font-bold text-lg text-gray-800">
+                Tổng tiền: {convertPrice(totalAmount)}
+              </h2>
+            </div>
+          )}
         </div>
       </div>
     </Loading>

@@ -387,7 +387,7 @@ export const AdminUser = () => {
       key: "avatar",
       width: 150,
       render: (text, record) => (
-        <Image width={50} height={50} src={record.avatar} alt={record.name} />
+        <Image className="rounded-full" width={50} height={50} src={record.avatar || 'https://th.bing.com/th/id/OIP.XXbgSKiEDzYZDqZQ4hYfvQHaHu?rs=1&pid=ImgDetMain'} alt={record.name} />
       ),
     },
     {

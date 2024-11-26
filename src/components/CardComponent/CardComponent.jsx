@@ -35,7 +35,7 @@ export const CardComponent = (props) => {
       <Card
         className={`relative ${
           isDisabled ? "bg-gray-300 cursor-not-allowed" : "bg-white cursor-pointer"
-        } mb-5`}
+        } mb-5 hidden md:block`}
         hoverable={!isDisabled}
         style={{
           width: "230px", // Chiều rộng cố định
@@ -62,7 +62,7 @@ export const CardComponent = (props) => {
 
         <div className="text-sm mb-2">
           <span>
-            {rating}{" "}
+            {rating || 0}{" "}
             <i className="fa-solid fa-star" style={{ color: "#FFD43B" }}></i>
           </span>
           <span> | </span>
@@ -77,18 +77,18 @@ export const CardComponent = (props) => {
         </div>
       </Card>
 
-      {/* <Card
+      <Card
         className={`relative ${
           isDisabled ? "bg-gray-300 cursor-not-allowed" : "bg-white cursor-pointer"
         } md:hidden block mb-5`}
         hoverable={!isDisabled}
         style={{
-          width: "100%", // Chiều rộng cố định
+          width: "350px", // Chiều rộng cố định
           height: "400px",
         }}
         cover={
           <img
-            className="object-cover h-48 w-full" // Sử dụng width: 100% để mở rộng ảnh tới chiều rộng card
+            className="object-contain h-48 w-full" // Sử dụng width: 100% để mở rộng ảnh tới chiều rộng card
             alt="product"
             src={image}
             style={{ objectFit: "contain" }} // Đảm bảo ảnh không bị méo
@@ -120,7 +120,7 @@ export const CardComponent = (props) => {
           </span>
           {discount > 0 && <span className="text-red-500"> -{discount}% </span>}
         </div>
-      </Card> */}
+      </Card>
 
       {isDisabled && (
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 -rotate-45 bg-red-500 text-white font-bold p-2 z-10">

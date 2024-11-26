@@ -72,10 +72,13 @@ export const AdminDashboard = () => {
   // }
 
   // Nếu dữ liệu đã được tải, tiếp tục với các biểu đồ và nội dung
-  const totalPrice = orders?.data.reduce(
-    (sum, order) => sum + order.totalPrice,
-    0
-  );
+  const totalPrice = orders?.data.reduce((sum, order) => {
+    // Kiểm tra nếu đơn hàng đã thanh toán (isPaid: true)
+    if (order.isPaid) {
+      return sum + order.totalPrice;
+    }
+    return sum;
+  }, 0);
 
   // Dữ liệu doanh thu theo tháng
   const dataRevenue = orders?.data.reduce((acc, order) => {
@@ -157,22 +160,6 @@ export const AdminDashboard = () => {
   // Giả sử `products` là mảng các sản phẩm của bạn
   const productData = products?.data || []; // Lấy dữ liệu sản phẩm (cung cấp giá trị mặc định nếu không có)
 
-  // Tính tổng lượt bán và sản phẩm bán chạy nhất
-  const salesData = productData.reduce(
-    (acc, product) => {
-      // Cộng tổng số lượt bán
-      acc.totalSales += product.selled || 0;
-
-      // Tìm sản phẩm bán chạy nhất
-      if (product.selled > acc.mostSoldProduct.selled) {
-        acc.mostSoldProduct = product;
-      }
-
-      return acc;
-    },
-    { totalSales: 0, mostSoldProduct: { name: "", selled: 0, _id: "" } }
-  );
-
   return (
     <div className="container mx-auto p-6">
       {/* Hiển thị Loading Spinner nếu đang tải dữ liệu */}
@@ -221,16 +208,6 @@ export const AdminDashboard = () => {
             <i>{products?.data.length}</i>
           </p>
         </div>
-        <div className="mb-6">
-          <h3 className="text-2xl font-semibold">Sales Statistics</h3>
-          <div className="mt-4 text-xl">
-            <p>Total Sales: {salesData.totalSales}</p>
-            <p>
-              Most Sold Product: {salesData.mostSoldProduct.name} with{" "}
-              {salesData.mostSoldProduct.selled} units sold.
-            </p>
-          </div>
-        </div>
       </div>
 
       {/* Biểu đồ Doanh thu */}
@@ -276,10 +253,7 @@ export const AdminDashboard = () => {
           <BarChart data={dataOrders}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="day" />
-            <YAxis
-              tickFormatter={(value) => `${convertPrice(value)}`}
-              width={150}
-            />
+            <YAxis tickFormatter={(value) => `${value}`} width={150} />
             <Tooltip />
             <Legend />
             <Bar dataKey="orders" fill="#82ca9d" />
@@ -294,10 +268,7 @@ export const AdminDashboard = () => {
           <BarChart data={dataMonthlyOrders}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
-            <YAxis
-              tickFormatter={(value) => `${convertPrice(value)}`}
-              width={150}
-            />
+            <YAxis tickFormatter={(value) => `${value}`} width={150} />
             <Tooltip />
             <Legend />
             <Bar dataKey="orders" fill="#82ca9d" />
@@ -341,6 +312,7 @@ export const AdminDashboard = () => {
           </ul>
         </div>
       )}
+      
     </div>
   );
 };
