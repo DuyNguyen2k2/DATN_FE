@@ -74,7 +74,7 @@ function App() {
             {routes.map((route) => {
               const Page = route.page;
               const ischeckAuth = !route.isPrivate || user.isAdmin;
-              const Layout = route.isShowHeader && route.isShowFooter ? DefaultComponent : Fragment;
+              const Layout = route.isShowChatbot && route.isShowHeader && route.isShowFooter ? DefaultComponent : Fragment;
 
               // return (
               //   <Route

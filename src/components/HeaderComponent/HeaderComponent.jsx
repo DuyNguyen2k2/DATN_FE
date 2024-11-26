@@ -97,7 +97,7 @@ export const HeaderComponent = ({
   return (
     <div className="bg-[#1a94ff]">
       <Row className="container mx-auto p-3 flex flex-wrap justify-between items-center">
-        <Col xs={24} sm={24} md={4} className="text-center md:text-left mb-1">
+        <Col xs={24} sm={24} md={6} className="text-center md:text-left mb-1">
           <h1
             className="cursor-pointer hover:text-cyan-400 text-xl sm:text-2xl md:text-3xl font-bold text-white truncate"
             onClick={() => navigate("/")}
@@ -121,7 +121,7 @@ export const HeaderComponent = ({
         <Col
           xs={24}
           sm={24}
-          md={8}
+          md={6}
           className=" text-white flex justify-center md:justify-end items-center"
         >
           <div className="flex justify-start items-center">
