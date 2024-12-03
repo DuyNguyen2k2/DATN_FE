@@ -16,6 +16,9 @@ export const getReviews = async (access_token, query = {}) => {
     },
   });
   return res.data;
+  // const sortedData = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  // return sortedData;
 };
 
 /**

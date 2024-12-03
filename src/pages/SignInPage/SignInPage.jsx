@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 import { Image, message } from "antd";
 import { ButtonComponent } from "../../components/ButtonComponent/ButtonComponent";
 import { InputForm } from "../../components/InputForm/InputForm";
@@ -12,7 +11,7 @@ import { Loading } from "../../components/LoadingComponent/Loading";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { updateUser } from "../../redux/slices/userSlice";
-
+// import logo from "../../assets/images/OIP.jpg";
 export const SignInPage = () => {
   const navigate = useNavigate();
   const handleSignUp = () => {
@@ -77,13 +76,10 @@ export const SignInPage = () => {
   };
 
   return (
-    <div
-      className="flex justify-center items-center h-[100vh] px-5"
-      style={{ background: "rgba(0,0,0,0.53)" }}
-    >
+    <div className="flex justify-center items-center h-screen px-5 bg-opacity-50 bg-black">
       {contextHolder}
-      <div className="min-[770px]:w-[800px] min-[770px]:h-[445px] rounded-lg bg-white flex">
-        <div className="min-[770px]:w-[500px] pt-10 pb-6 px-[45px] flex flex-1 flex-col">
+      <div className="flex flex-col min-w-[400px] md:min-w-[800px] bg-white rounded-lg shadow-lg md:flex-row">
+        <div className="flex-1 pt-10 pb-6 px-[45px] flex flex-col">
           <div className="pt-10">
             <h1 className="text-2xl font-bold">Xin chào</h1>
             <p className="text-sm mt-1 mb-5">Đăng nhập hoặc tạo tài khoản</p>
@@ -92,6 +88,8 @@ export const SignInPage = () => {
               placeholder="abc@gmail.com"
               value={email}
               handleonchange={handleOnchangeEmail}
+              type="email"  // Đảm bảo rằng type là "email" để trình duyệt nhận diện
+              autoComplete="email" 
             />
             <div className="relative">
               <span
@@ -123,7 +121,14 @@ export const SignInPage = () => {
                 onClick={handleSignIn}
               />
             </Loading>
-            <p className="text-sm text-[#0D5CB6]">Quên mật khẩu?</p>
+
+            <p
+              className="text-sm text-[#0D5CB6] cursor-pointer hover:underline w-max"
+              onClick={() => navigate("/forgot-password")}
+            >
+              Quên mật khẩu?
+            </p>
+
             <p className="text-sm">
               Chưa có tài khoản?{" "}
               <span
@@ -135,22 +140,19 @@ export const SignInPage = () => {
             </p>
           </div>
         </div>
-        <div
-          style={{
-            background:
-              "linear-gradient(136deg, rgb(240, 248, 255) -1%, rgb(219, 238, 255) 85%",
-          }}
-          className="w-[300px] h-full min-[770px]:flex justify-center flex-col items-center gap-1 text-blue-600 rounded-r-lg hidden"
-        >
+        {/* Bên phải chứa ảnh */}
+        <div className="hidden md:flex flex-col items-center justify-center bg-gradient-to-r from-[#f0f8ff] to-[#dbeeff] p-6 w-[300px] rounded-r-lg">
           <Image
-            width="203px"
-            height="203px"
+            width={203}
+            height={203}
             className="rounded-full object-cover"
             src="https://th.bing.com/th/id/OIP.f955eR5C2FAkk9FL5bbarAHaEK?w=296&h=180&c=7&r=0&o=5&pid=1.7"
             preview={false}
           />
-          <h4 className="font-semibold">Mua sắm tại Techtrovedecor</h4>
-          <p className="text-sm">Siêu ưu đãi mỗi ngày</p>
+          <h4 className="font-semibold mt-4 text-center">
+            Mua sắm tại Techtrovedecor
+          </h4>
+          <p className="text-sm text-center">Siêu ưu đãi mỗi ngày</p>
         </div>
       </div>
     </div>

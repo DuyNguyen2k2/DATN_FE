@@ -17,6 +17,7 @@ import {
   Pagination,
   Modal,
   message,
+  Select,
 } from "antd";
 import {
   HomeOutlined,
@@ -65,33 +66,41 @@ export const ProductDetailsComponent = ({ idProduct }) => {
     }
   };
 
-  const fetchReviews = async (page = 1, limit = 10) => {
-    try {
-      setIsLoadingReviews(true);
-      const query = { product_id: idProduct, page, limit };
-      const res = await ReviewServices.getReviews(user.accessToken, query);
-      console.log("data", res.data);
-      setReviews(res.data);
-      setTotalReviews(res.total);
-      setCurrentPage(page);
-      return res.data;
-    } catch (error) {
-      console.error("Error fetching reviews:", error);
-    } finally {
-      setIsLoadingReviews(false);
-    }
-  };
+  const [sortOrder, setSortOrder] = useState('oldest'); // Giữ mặc định là 'asc' (Cũ nhất)
 
-  useEffect(() => {
-    if (idProduct) {
-      fetchReviews(currentPage, pageSize);
-    }
-  }, [idProduct, currentPage, pageSize]);
+const handleSortChange = (value) => {
+  setSortOrder(value); // Cập nhật lại order khi thay đổi sắp xếp
+  fetchReviews(currentPage, pageSize, value); // Gọi lại fetchReviews với sortOrder mới
+};
 
-  // Xử lý thay đổi trang
-  const handlePageChange = (page, pageSize) => {
-    fetchReviews(page, pageSize);
-  };
+const fetchReviews = async (page = 1, limit = 10, sort) => {
+  try {
+    setIsLoadingReviews(true);
+    const query = { product_id: idProduct, page, limit, sort }; // Truyền tham số sort vào query
+    const res = await ReviewServices.getReviews(user.accessToken, query);
+    setReviews(res.data);
+    setTotalReviews(res.total);
+    setCurrentPage(page);
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+  } finally {
+    setIsLoadingReviews(false);
+  }
+};
+
+// useEffect để gọi fetchReviews khi idProduct, currentPage, hoặc pageSize thay đổi
+useEffect(() => {
+  if (idProduct) {
+    fetchReviews(currentPage, pageSize, sortOrder); // Đảm bảo luôn truyền sortOrder khi fetch
+  }
+}, [idProduct, currentPage, pageSize, sortOrder]); // Thêm sortOrder vào dependencies
+
+// Xử lý thay đổi trang
+const handlePageChange = (page, pageSize) => {
+  setCurrentPage(page);
+  setPageSize(pageSize);
+  fetchReviews(page, pageSize, sortOrder); // Đảm bảo luôn truyền sortOrder vào fetch khi thay đổi trang
+};
 
   const { isLoading, data: productDetails } = useQuery(
     ["productDetails", idProduct],
@@ -487,6 +496,17 @@ export const ProductDetailsComponent = ({ idProduct }) => {
               <div className="mt-2 flex items-center justify-between">
                 <h3 className="text-xl font-semibold">Các đánh giá</h3>
                 <p>Tất cả đánh giá ({productDetails.review_count || 0})</p>
+              </div>
+              <div className="mt-2 flex justify-between">
+                <span className="text-sm">Sắp xếp theo:</span>
+                <Select
+                  value={sortOrder}
+                  onChange={handleSortChange}
+                  className="w-40"
+                >
+                  <Select.Option value="oldest">Cũ nhất</Select.Option>
+                  <Select.Option value="latest">Mới nhất</Select.Option>
+                </Select>
               </div>
               <div className="mt-2">
                 {isLoadingReviews ? (

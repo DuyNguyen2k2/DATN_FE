@@ -28,8 +28,12 @@ export const MyOrderPage = () => {
 
     try {
       const res = await OrderServives.getAllOrderDetails(token, userId);
-      // console.log("res", res.data);
-      return res.data;
+      return res.data
+      .map((order) => ({
+        ...order,
+        createdAt: new Date(order.createdAt), // Parse thành Date object
+      }))
+      .sort((a, b) => b.createdAt - a.createdAt); // Sắp xếp tại đây
     } catch (error) {
       console.error("Error fetching order details:", error);
       throw new Error("Failed to fetch order details");
@@ -64,6 +68,7 @@ export const MyOrderPage = () => {
   // });
 
   const { isLoading, data, isError, error } = queryOrders;
+  console.log('queryOrders', queryOrders)
   // console.log("data", data);
   // Tính tổng tiền của các đơn hàng
   const totalAmount =

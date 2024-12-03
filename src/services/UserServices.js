@@ -70,3 +70,18 @@ export const deleteManyUsers = async (ids, access_token) => {
   });
   return res.data;
 };
+
+export const changePassword = async (access_token, data) => {
+  const res = await axiosJWT.put(`${BE_URL}/user/change-password`, data,{
+    headers: {
+      token: `Bearer ${access_token}`,
+    },
+  });
+  return res.data;
+};
+
+export const forgotPassword = async (data) => {
+  const res = await axiosJWT.post(`${BE_URL}/user/forgot-password`, data);
+  return res.data;
+};
+

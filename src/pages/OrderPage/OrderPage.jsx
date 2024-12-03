@@ -237,7 +237,7 @@ export const OrderPage = ({ count = 1 }) => {
   ];
 
   return (
-    <div className="container-2xl bg-[#fff8f8] h-[100vh]">
+    <div className="container-2xl bg-[#fff8f8] h-full md:pb-[155px]">
       <div className="container mx-auto">
         <div className="py-2 w-full truncate">
           <Breadcrumb
@@ -253,7 +253,11 @@ export const OrderPage = ({ count = 1 }) => {
           />
         </div>
         <div className="">
-          <Row gutter={[16, 16]}>
+          <Row
+            gutter={[16, 16]}
+            style={{ flexWrap: "wrap" }}
+            className="flex flex-wrap"
+          >
             <Col xs={24} sm={24} md={18} className="px-5">
               <div className="mb-5 bg-white p-5">
                 <StepsComponent
@@ -270,107 +274,114 @@ export const OrderPage = ({ count = 1 }) => {
                 />
               </div>
               {/* Header Section */}
-              <div className="header flex justify-between items-center bg-white p-3 rounded-md">
+              <div className="header flex flex-wrap items-center bg-white p-3 rounded-md">
                 {/* CheckAll Section */}
-                <div className="flex items-center checkAll">
+                <div className="flex items-center w-full sm:w-1/6 justify-start sm:justify-center mb-2 sm:mb-0">
                   <Checkbox
                     onChange={handleOnchangeCheckAll}
                     checked={listChecked.length === order?.orderItems?.length}
-                  ></Checkbox>
+                  />
                   <span className="ml-2">
-                    Tất cả ({order?.orderItem?.length} sản phẩm)
+                    Tất cả ({order?.orderItems?.length} sản phẩm)
                   </span>
                 </div>
 
                 {/* Columns Section */}
-                <div className="hidden sm:flex flex-1 justify-between items-center columns">
-                  <span className="w-1/4 text-center">Tên sản phẩm</span>
-                  <span className="w-1/4 text-center">Đơn giá</span>
-                  <span className="w-1/4 text-center">Số lượng</span>
-                  <span className="w-1/4 text-center">Thành tiền</span>
-                  <DeleteOutlined
-                    style={{ cursor: "pointer" }}
-                    onClick={showDeleteAllConfirm}
-                  />
+                <div className="hidden sm:flex flex-1 justify-between items-center w-full">
+                  <span className="w-1/6 text-center">Tên sản phẩm</span>
+                  <span className="w-1/6 text-center">Đơn giá</span>
+                  <span className="w-1/6 text-center">Số lượng</span>
+                  <span className="w-1/6 text-center">Thành tiền</span>
+                  <span className="w-1/6 text-center">
+                    <DeleteOutlined
+                      style={{ cursor: "pointer" }}
+                      onClick={showDeleteAllConfirm}
+                    />
+                  </span>
                 </div>
               </div>
 
               {/* List Product Section */}
-              {order?.orderItems?.map((order) => {
-                return (
-                  <div
-                    key={order?.product}
-                    className="list-product flex flex-wrap justify-between items-center bg-white p-3 rounded-md mb-3"
-                  >
-                    {/* CheckAll Section */}
-                    <div className="flex items-center gap-4 w-full sm:w-auto">
-                      <Checkbox
-                        onChange={onChange}
-                        value={order?.product}
-                        checked={listChecked.includes(order?.product)}
-                      />
-                      <img
-                        src={order?.image}
-                        alt=""
-                        className="w-[120px] h-auto object-cover sm:w-[80px] mb-2 sm:mb-0"
-                      />
-                    </div>
-
-                    {/* Columns Section */}
-                    <div className="flex flex-wrap w-full sm:w-auto justify-between items-center text-center">
-                      <span className="sm:w-1/4 w-full">{order?.name}</span>
-                      <span className="sm:w-1/4 w-full">
-                        {convertPrice(order?.price)}
-                      </span>
-
-                      {/* Quantity Section */}
-                      <div className="sm:w-1/4 w-full flex justify-center items-center gap-2 mt-2 mb-5">
-                        <Button
-                          onClick={() =>
-                            handleChangeCount(
-                              "decrement",
-                              order?.product,
-                              order?.amount === 1
-                            )
-                          }
-                          className="custom-button"
-                        >
-                          <MinusOutlined />
-                        </Button>
-                        <InputNumber
-                          onChange={onChange}
-                          value={order?.amount}
-                          min={1}
-                          className="rounded custom-input-number w-[50px]"
-                        />
-                        <Button
-                          onClick={() =>
-                            handleChangeCount(
-                              "increment",
-                              order?.product,
-                              order?.amount === order?.countInStock
-                            )
-                          }
-                          className="custom-button"
-                        >
-                          <PlusOutlined />
-                        </Button>
-                      </div>
-
-                      <span className="sm:w-1/4 w-full">
-                        {convertPrice(order?.price * order?.amount)}
-                      </span>
-                      <DeleteOutlined
-                        style={{ cursor: "pointer" }}
-                        onClick={() => showDeleteConfirm(order?.product)}
-                      />
-                    </div>
+              {order?.orderItems?.map((item) => (
+                <div
+                  key={item?.product}
+                  className="list-product flex flex-wrap items-center bg-white p-3 rounded-md mb-3"
+                >
+                  {/* Checkbox + Image Section */}
+                  <div className="flex items-center gap-4 w-full sm:w-1/6 justify-start sm:justify-center mb-2 sm:mb-0">
+                    <Checkbox
+                      onChange={onChange}
+                      value={item?.product}
+                      checked={listChecked.includes(item?.product)}
+                    />
+                    <img
+                      src={item?.image}
+                      alt=""
+                      className="w-[80px] h-auto object-cover"
+                    />
                   </div>
-                );
-              })}
+
+                  {/* Product Name */}
+                  <span className="w-full sm:w-1/6 text-left sm:text-center mb-2 sm:mb-0">
+                    {item?.name}
+                  </span>
+
+                  {/* Unit Price */}
+                  <span className="w-full sm:w-1/6 text-left sm:text-center mb-2 sm:mb-0">
+                    {convertPrice(item?.price)}
+                  </span>
+
+                  {/* Quantity Section */}
+                  <div className="w-full sm:w-1/6 flex justify-start sm:justify-center items-center gap-2 mb-2 sm:mb-0">
+                    <Button
+                      onClick={() =>
+                        handleChangeCount(
+                          "decrement",
+                          item?.product,
+                          item?.amount === 1
+                        )
+                      }
+                      className="custom-button"
+                    >
+                      <MinusOutlined />
+                    </Button>
+                    <InputNumber
+                      onChange={onChange}
+                      value={item?.amount}
+                      min={1}
+                      className="rounded custom-input-number w-[60px]"
+                    />
+                    <Button
+                      onClick={() =>
+                        handleChangeCount(
+                          "increment",
+                          item?.product,
+                          item?.amount === item?.countInStock
+                        )
+                      }
+                      className="custom-button"
+                    >
+                      <PlusOutlined />
+                    </Button>
+                  </div>
+
+                  {/* Total Price */}
+                  <span className="w-full sm:w-1/6 text-left sm:text-center mb-2 sm:mb-0">
+                    {convertPrice(item?.price * item?.amount)}
+                  </span>
+
+                  {/* Delete Icon */}
+                  <span className="w-full sm:w-1/6 flex justify-start sm:justify-center">
+                    <DeleteOutlined
+                      style={{ cursor: "pointer" }}
+                      onClick={() => showDeleteConfirm(item?.product)}
+                    />
+                  </span>
+                </div>
+              ))}
             </Col>
 
-            <Col xs={24} sm={24} md={6} className="w-full md:w-[100px]">
+            <Col xs={24} sm={24} md={6} className="w-full md:w-[100px] max-md:mb-96">
               <div className="bg-white p-5 rounded-md">
                 <div className="mb-3">
                   <span>Giao đến: </span>
