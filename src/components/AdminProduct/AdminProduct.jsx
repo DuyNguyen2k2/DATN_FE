@@ -2,7 +2,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-no-duplicate-props */
 /* eslint-disable no-unused-vars */
-import { Button, Form, Image, message, Select, Space, Upload } from "antd";
+import {
+  Button,
+  Form,
+  Image,
+  Input,
+  message,
+  Select,
+  Space,
+  Upload,
+} from "antd";
 import { TableComponent } from "../TableComponent/TableComponent";
 import { useEffect, useRef, useState } from "react";
 import { InputComponent } from "../InputComponent/InputComponent";
@@ -34,13 +43,10 @@ export const AdminProduct = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10); // Kích thước trang mặc định
 
-  
-
   const showModal = () => {
     setIsModalOpen(true);
   };
-  
-  
+
   const handleOk = () => {
     onFinish();
   };
@@ -48,7 +54,7 @@ export const AdminProduct = () => {
     setIsModalOpen(false);
     form.resetFields();
     // Reset product state as well
-    setStateProduct(initial());  // Reset to initial state or empty object
+    setStateProduct(initial()); // Reset to initial state or empty object
   };
 
   const initial = () => ({
@@ -60,22 +66,15 @@ export const AdminProduct = () => {
     discount: "",
     image: "",
     newType: "",
-  })
+  });
 
   const [stateProduct, setStateProduct] = useState(initial());
 
   const [stateProductDetails, setStateProductDetails] = useState(initial());
 
   const mutation = useMutationHooks((data) => {
-    const {
-      name,
-      price,
-      description,
-      countInStock,
-      type,
-      discount,
-      image,
-    } = data;
+    const { name, price, description, countInStock, type, discount, image } =
+      data;
     const res = ProductServices.createProduct({
       name,
       price,
@@ -131,9 +130,12 @@ export const AdminProduct = () => {
       description: stateProduct.description,
       image: stateProduct.image,
       countInStock: stateProduct.countInStock,
-      type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
+      type:
+        stateProduct.type === "add_type"
+          ? stateProduct.newType
+          : stateProduct.type,
       discount: stateProduct.discount,
-    }
+    };
     mutation.mutate(params, {
       onSettled: () => {
         queryProducts.refetch();
@@ -150,8 +152,6 @@ export const AdminProduct = () => {
       .toLocaleString("vi-VN", { style: "currency", currency: "VND" })
       .replace("VND", "đ");
   };
-
-
 
   const handleOnChange = (e) => {
     // setStateProduct({
@@ -218,16 +218,16 @@ export const AdminProduct = () => {
     if (!isModalOpen) {
       form.setFieldsValue(stateProductDetails);
       // Reset the image field manually
-      setStateProduct(prevState => ({
+      setStateProduct((prevState) => ({
         ...prevState,
-        image: stateProductDetails.image || null // Set it to null or the initial image
+        image: stateProductDetails.image || null, // Set it to null or the initial image
       }));
     } else {
       form.setFieldsValue(initial());
       // Optionally, clear the image when initializing
-      setStateProduct(prevState => ({
+      setStateProduct((prevState) => ({
         ...prevState,
-        image: null
+        image: null,
       }));
     }
   }, [form, stateProductDetails, isModalOpen]);
@@ -614,11 +614,13 @@ export const AdminProduct = () => {
     },
   ];
 
-  const dataSource = products?.data.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((product, index) => ({
-    ...product,
-    key: product._id,
-    index: index + 1 + (currentPage - 1) * pageSize, // Cập nhật chỉ số cho đúng
-  }));
+  const dataSource = products?.data
+    .slice((currentPage - 1) * pageSize, currentPage * pageSize)
+    .map((product, index) => ({
+      ...product,
+      key: product._id,
+      index: index + 1 + (currentPage - 1) * pageSize, // Cập nhật chỉ số cho đúng
+    }));
 
   const fetchAllType = async () => {
     const res = await ProductServices.getAllType();
@@ -632,15 +634,11 @@ export const AdminProduct = () => {
 
   const [typeSelect, setTypeSelect] = useState([]);
   const handleChangeSelected = (value) => {
-    
-
     setStateProduct({
       ...stateProduct,
       type: value,
     });
   };
-
-
 
   return (
     <div>
@@ -709,8 +707,7 @@ export const AdminProduct = () => {
                   },
                 ]}
               >
-                
-                  <Select
+                <Select
                   name="type"
                   // defaultValue="lucy"
                   // style={{
@@ -720,11 +717,9 @@ export const AdminProduct = () => {
                   onChange={handleChangeSelected}
                   options={renderOptions(typeProduct?.data?.data)}
                 />
-                
-                
               </Form.Item>
 
-              {stateProduct.type === 'add_type' && (
+              {stateProduct.type === "add_type" && (
                 <Form.Item
                   label="New Type"
                   name="newType"
@@ -798,11 +793,11 @@ export const AdminProduct = () => {
                   },
                 ]}
               >
-                <InputComponent
-                  className=""
+                <Input.TextArea
                   name="description"
                   value={stateProduct.description}
                   onChange={handleOnChange}
+                  rows={4} // Số dòng hiển thị ban đầu
                 />
               </Form.Item>
 
@@ -1025,7 +1020,7 @@ export const AdminProduct = () => {
                   },
                 ]}
               >
-                <InputComponent
+                <Input.TextArea
                   className=""
                   name="description"
                   value={stateProductDetails["description"]}

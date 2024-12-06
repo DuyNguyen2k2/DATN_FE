@@ -34,7 +34,7 @@ import * as ProductServices from "../../services/ProductServices";
 import * as ReviewServices from "../../services/ReviewServices";
 import { useQuery, useMutation } from "react-query";
 import { Loading } from "../LoadingComponent/Loading";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./style.css"; // Ensure this is included
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -66,41 +66,41 @@ export const ProductDetailsComponent = ({ idProduct }) => {
     }
   };
 
-  const [sortOrder, setSortOrder] = useState('oldest'); // Giữ mặc định là 'asc' (Cũ nhất)
+  const [sortOrder, setSortOrder] = useState("oldest"); // Giữ mặc định là 'asc' (Cũ nhất)
 
-const handleSortChange = (value) => {
-  setSortOrder(value); // Cập nhật lại order khi thay đổi sắp xếp
-  fetchReviews(currentPage, pageSize, value); // Gọi lại fetchReviews với sortOrder mới
-};
+  const handleSortChange = (value) => {
+    setSortOrder(value); // Cập nhật lại order khi thay đổi sắp xếp
+    fetchReviews(currentPage, pageSize, value); // Gọi lại fetchReviews với sortOrder mới
+  };
 
-const fetchReviews = async (page = 1, limit = 10, sort) => {
-  try {
-    setIsLoadingReviews(true);
-    const query = { product_id: idProduct, page, limit, sort }; // Truyền tham số sort vào query
-    const res = await ReviewServices.getReviews(user.accessToken, query);
-    setReviews(res.data);
-    setTotalReviews(res.total);
+  const fetchReviews = async (page = 1, limit = 10, sort) => {
+    try {
+      setIsLoadingReviews(true);
+      const query = { product_id: idProduct, page, limit, sort }; // Truyền tham số sort vào query
+      const res = await ReviewServices.getReviews(user.accessToken, query);
+      setReviews(res.data);
+      setTotalReviews(res.total);
+      setCurrentPage(page);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+    } finally {
+      setIsLoadingReviews(false);
+    }
+  };
+
+  // useEffect để gọi fetchReviews khi idProduct, currentPage, hoặc pageSize thay đổi
+  useEffect(() => {
+    if (idProduct) {
+      fetchReviews(currentPage, pageSize, sortOrder); // Đảm bảo luôn truyền sortOrder khi fetch
+    }
+  }, [idProduct, currentPage, pageSize, sortOrder]); // Thêm sortOrder vào dependencies
+
+  // Xử lý thay đổi trang
+  const handlePageChange = (page, pageSize) => {
     setCurrentPage(page);
-  } catch (error) {
-    console.error("Error fetching reviews:", error);
-  } finally {
-    setIsLoadingReviews(false);
-  }
-};
-
-// useEffect để gọi fetchReviews khi idProduct, currentPage, hoặc pageSize thay đổi
-useEffect(() => {
-  if (idProduct) {
-    fetchReviews(currentPage, pageSize, sortOrder); // Đảm bảo luôn truyền sortOrder khi fetch
-  }
-}, [idProduct, currentPage, pageSize, sortOrder]); // Thêm sortOrder vào dependencies
-
-// Xử lý thay đổi trang
-const handlePageChange = (page, pageSize) => {
-  setCurrentPage(page);
-  setPageSize(pageSize);
-  fetchReviews(page, pageSize, sortOrder); // Đảm bảo luôn truyền sortOrder vào fetch khi thay đổi trang
-};
+    setPageSize(pageSize);
+    fetchReviews(page, pageSize, sortOrder); // Đảm bảo luôn truyền sortOrder vào fetch khi thay đổi trang
+  };
 
   const { isLoading, data: productDetails } = useQuery(
     ["productDetails", idProduct],
@@ -376,10 +376,33 @@ const handlePageChange = (page, pageSize) => {
                     <span>Đã bán {productDetails.selled || 0}</span>
                   </div>
                   <div className="bg-gray-100 rounded font-bold text-lg md:text-2xl p-3 mt-5">
-                    {convertPrice(productDetails?.price)}
+                    {productDetails?.discount > 0 ? (
+                      <>
+                        {/* Giá cũ bị gạch ngang */}
+                        <span className="line-through text-gray-500 text-base mr-2">
+                          {convertPrice(productDetails?.price)}
+                        </span>
+                        {/* Giá đã giảm */}
+                        <span className="text-red-500">
+                          {convertPrice(
+                            productDetails?.price -
+                              (productDetails?.price *
+                                productDetails?.discount) /
+                                100
+                          )}
+                        </span>
+                        {/* Tỷ lệ giảm giá */}
+                        <span className="text-red-500 ml-2">
+                          -{productDetails?.discount}%
+                        </span>
+                      </>
+                    ) : (
+                      // Nếu không có giảm giá, chỉ hiển thị giá gốc
+                      <span>{convertPrice(productDetails?.price)}</span>
+                    )}
                   </div>
                   <div className="p-5 mt-2 border-t">
-                    <span className="text-lg font-bold">Giao đến:</span>
+                    <span className="text-lg font-bold">Giao đến: </span>
                     <span className="text-lg">
                       <i>
                         {user?.address +
@@ -439,7 +462,16 @@ const handlePageChange = (page, pageSize) => {
             <div className="mt-10 bg-white p-5 rounded-md">
               <h1 className="text-lg md:text-xl font-bold">Mô tả sản phẩm</h1>
               <p className="text-sm md:text-base">
-                {productDetails?.description}
+                {productDetails?.description?.split("\n").map((line, index) => (
+                  <React.Fragment key={index}>
+                    <i
+                      className="fa-solid fa-caret-right"
+                      style={{ color: "#63E6BE" }}
+                    ></i>{" "}
+                    {line}
+                    <br />
+                  </React.Fragment>
+                ))}
               </p>
             </div>
 
