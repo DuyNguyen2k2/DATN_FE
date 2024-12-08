@@ -308,6 +308,7 @@ export const AdminOrder = () => {
       dataIndex: "createdAt",
       key: "createdAt",
       width: 150,
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       render: (text) => {
         const date = new Date(text);
         return `${date.toLocaleDateString("en-GB")} ${date.toLocaleTimeString("en-GB", {

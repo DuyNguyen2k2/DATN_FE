@@ -30,6 +30,7 @@ export const ChangePasswordPage = () => {
         message: "Success",
         description: response.message || "Password changed successfully!",
       });
+      goToHome(); // Quay lại trang chủ
     } catch (error) {
       console.error("Change password error:", error);
       notification.error({
@@ -41,7 +42,7 @@ export const ChangePasswordPage = () => {
 
   // Hàm quay lại trang chủ
   const goToHome = () => {
-    navigate("/"); // Điều hướng về trang chủ
+    navigate("/user-profile"); // Điều hướng về trang chủ
   };
 
   return (

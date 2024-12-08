@@ -83,7 +83,7 @@ export const HeaderComponent = ({
       >
         Đơn hàng của tôi
       </p>
-      <p className="p-2 cursor-pointer hover:underline" onClick={() => navigate('/change-password')}>Đổi mật khẩu</p>
+      {/* <p className="p-2 cursor-pointer hover:underline" onClick={() => navigate('/change-password')}>Đổi mật khẩu</p> */}
       <p className="p-2 cursor-pointer hover:underline" onClick={handleLogout}>
         Đăng xuất
       </p>

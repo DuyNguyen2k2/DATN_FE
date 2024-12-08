@@ -27,9 +27,9 @@ export const UserProfilePage = () => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [city, setCity] = useState("")
-  const [district, setDictrict] = useState("")
-  const [commune, setCommune] = useState("")
+  const [city, setCity] = useState("");
+  const [district, setDistrict] = useState("");
+  const [commune, setCommune] = useState("");
   const [avatar, setAvatar] = useState("");
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export const UserProfilePage = () => {
     setAddress(user?.address);
     setAvatar(user?.avatar);
     setCity(user?.city);
-    setDictrict(user?.district);
+    setDistrict(user?.district);
     setCommune(user?.commune);
   }, [user]);
 
@@ -70,7 +70,7 @@ export const UserProfilePage = () => {
     setCity(value);
   };
   const handleChangeDistrict = (value) => {
-    setDictrict(value);
+    setDistrict(value);
   };
   const handleChangeCommune = (value) => {
     setCommune(value);
@@ -90,25 +90,22 @@ export const UserProfilePage = () => {
   };
 
   const handleUpdate = () => {
-    mutation.mutate(
-      {
-        id: user?.id,
-        name,
-        phone,
-        address,
-        avatar,
-        city,
-        district,
-        commune,
-        access_token: user?.access_token,
-      }
-    );
+    mutation.mutate({
+      id: user?.id,
+      name,
+      phone,
+      address,
+      avatar,
+      city,
+      district,
+      commune,
+      access_token: user?.access_token,
+    });
   };
 
   return (
-    <div>
-      {contextHolder}
-      <div className="container mx-auto xl:mt-[65px] mt-[150px]">
+    <div className="mb-[85px] p-2">
+      <div className="container mx-auto xl:mt-[65px] mt-[20px]">
         <Breadcrumb
           className="font-semibold"
           items={[
@@ -122,160 +119,130 @@ export const UserProfilePage = () => {
           ]}
         />
       </div>
-      <Loading isLoading={isLoading}>
-        <div className="container mx-auto">
-          <h1 className="text-xl font-bold">Thông tin người dùng</h1>
-          <div className="">
-            <Row className="border rounded-lg mt-5 hidden min-[770px]:flex">
-              <Col
-                span={10}
-                className="flex justify-center items-center flex-col p-5 border-r"
-              >
-                <Image
-                  className="rounded-full"
-                  width={200}
-                  height={200}
-                  src={avatar}
-                  fallback="https://phongreviews.com/wp-content/uploads/2022/11/avatar-facebook-mac-dinh-19.jpg"
-                  preview={false}
-                />
 
-                <Upload
-                  className="mt-5"
-                  maxCount={1}
-                  showUploadList={false}
-                  onChange={handleOnchangeAvatar}
-                >
-                  <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
-                </Upload>
-              </Col>
-              <Col span={14} className="p-5">
-                <div className="mb-2">
-                  <label htmlFor="name">Tên</label>
+      <Loading isLoading={false}>
+        <div className="container mx-auto">
+          <h1 className="text-xl font-bold mb-4">Thông tin người dùng</h1>
+
+          <Row gutter={16}>
+            {/* Avatar và Upload */}
+            <Col
+              xs={24}
+              md={8}
+              className="text-center flex flex-col items-center justify-center mb-5"
+            >
+              <Image
+                className="rounded-full"
+                width={200}
+                height={200}
+                src={avatar}
+                fallback="https://phongreviews.com/wp-content/uploads/2022/11/avatar-facebook-mac-dinh-19.jpg"
+                preview={false}
+              />
+              <Upload
+                className="mt-4"
+                maxCount={1}
+                showUploadList={false}
+                onChange={handleOnchangeAvatar}
+              >
+                <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
+              </Upload>
+            </Col>
+
+            {/* Thông tin người dùng */}
+            <Col xs={24} md={16}>
+              <div className="grid gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Tên
+                  </label>
                   <InputForm
                     id="name"
                     placeholder="Họ tên"
                     value={name}
-                    handleonchange={handleChangeName}
+                    handleonchange={(value) => setName(value)}
                   />
                 </div>
-                <div className="mb-2">
-                  <label htmlFor="phone">SĐT</label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Số điện thoại
+                  </label>
                   <InputForm
                     id="phone"
                     placeholder="Số điện thoại"
                     value={phone}
-                    handleonchange={handleChangePhone}
+                    handleonchange={(value) => setPhone(value)}
                   />
                 </div>
-                <div className="mb-2">
-                  <label htmlFor="city">Thành phố</label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Thành phố
+                  </label>
                   <InputForm
                     id="city"
                     placeholder="Thành phố"
                     value={city}
-                    handleonchange={handleChangeCity}
+                    handleonchange={(value) => setCity(value)}
                   />
                 </div>
-                <div className="mb-2">
-                  <label htmlFor="district">Quận/huyện</label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Quận/Huyện
+                  </label>
                   <InputForm
                     id="district"
-                    placeholder="Quận/huyện"
+                    placeholder="Quận/Huyện"
                     value={district}
-                    handleonchange={handleChangeDistrict}
+                    handleonchange={(value) => setDistrict(value)}
                   />
                 </div>
-                <div className="mb-2">
-                  <label htmlFor="commune">Xã/thị xã</label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Xã/Thị xã
+                  </label>
                   <InputForm
                     id="commune"
-                    placeholder="Xã/thị xã"
+                    placeholder="Xã/Thị xã"
                     value={commune}
-                    handleonchange={handleChangeCommune}
+                    handleonchange={(value) => setCommune(value)}
                   />
                 </div>
-                <div className="mb-2">
-                  <label htmlFor="address">Địa chỉ</label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Địa chỉ
+                  </label>
                   <InputForm
                     id="address"
                     placeholder="Địa chỉ"
                     value={address}
-                    handleonchange={handleChangeAddress}
+                    handleonchange={(value) => setAddress(value)}
                   />
                 </div>
-                
-              </Col>
-            </Row>
-            <Row className="border rounded-lg mt-5 flex min-[770px]:hidden">
-              <Col
-                span={24}
-                className="flex justify-center items-center flex-col p-5 border-b"
-              >
-                <Image
-                  className="rounded-full object-cover"
-                  width={200}
-                  height={200}
-                  src={avatar}
-                  fallback="https://phongreviews.com/wp-content/uploads/2022/11/avatar-facebook-mac-dinh-19.jpg"
-                  preview={false}
-                />
+              </div>
+            </Col>
+          </Row>
 
-                <Upload
-                  className="mt-5"
-                  maxCount={1}
-                  showUploadList={false}
-                  onChange={handleOnchangeAvatar}
-                >
-                  <Button icon={<UploadOutlined />}>Tải ảnh lên</Button>
-                </Upload>
-              </Col>
-              <Col span={24} className="p-5">
-                <div className="mb-2">
-                  <label htmlFor="name">Tên</label>
-                  <InputForm
-                    id="name"
-                    placeholder="Họ tên"
-                    value={name}
-                    handleonchange={handleChangeName}
-                  />
-                </div>
-                <div className="mb-2">
-                  <label htmlFor="name">SĐT</label>
-                  <InputForm
-                    id="name"
-                    placeholder="Số điện thoại"
-                    value={phone}
-                    handleonchange={handleChangePhone}
-                  />
-                </div>
-                <div className="mb-2">
-                  <label htmlFor="name">Địa chỉ</label>
-                  <InputForm
-                    id="name"
-                    placeholder="Địa chỉ"
-                    value={address}
-                    handleonchange={handleChangeAddress}
-                  />
-                </div>
-              </Col>
-            </Row>
-            <div className="flex gap-2 justify-end items-center mt-5 mb-5">
-              <ButtonComponent
-                onClick={handleUpdate}
-                textButton="Cập nhật"
-                className="rounded"
-                type="primary"
-              />
-              <ButtonComponent
-                onClick={() => {
-                  navigate("/");
-                }}
-                textButton="Thoát"
-                className="rounded"
-                type="link"
-              />
-            </div>
+          {/* Buttons */}
+          <div className="flex gap-4 justify-end mt-6">
+            <ButtonComponent
+              onClick={handleUpdate}
+              textButton="Cập nhật"
+              className="rounded"
+              type="primary"
+            />
+            <ButtonComponent
+              onClick={() => navigate("/")}
+              textButton="Thoát"
+              className="rounded"
+              type="link"
+            />
+            <Button
+              onClick={() => navigate("/change-password")}
+              type="default"
+              className="rounded "
+            >
+              Đổi mật khẩu
+            </Button>
           </div>
         </div>
       </Loading>

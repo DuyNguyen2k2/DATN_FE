@@ -237,7 +237,7 @@ export const OrderPage = ({ count = 1 }) => {
   ];
 
   return (
-    <div className="container-2xl bg-[#fff8f8] h-full md:pb-[155px]">
+    <div className="container-2xl bg-[#fff8f8] min-h-screen mb-20">
       <div className="container mx-auto">
         <div className="py-2 w-full truncate">
           <Breadcrumb
@@ -381,7 +381,7 @@ export const OrderPage = ({ count = 1 }) => {
               ))}
             </Col>
 
-            <Col xs={24} sm={24} md={6} className="w-full md:w-[100px] max-md:mb-96">
+            <Col xs={24} sm={24} md={6} className="w-full md:w-[100px]">
               <div className="bg-white p-5 rounded-md">
                 <div className="mb-3">
                   <span>Giao đến: </span>
@@ -427,7 +427,7 @@ export const OrderPage = ({ count = 1 }) => {
                   </div>
                 </div>
               </div>
-              <div className="flex justify-center m-2">
+              <div className="flex justify-center">
                 <ButtonComponent
                   onClick={() => handleAddToCart()}
                   className="rounded w-full"

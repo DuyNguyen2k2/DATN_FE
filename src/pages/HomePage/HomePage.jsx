@@ -1,25 +1,25 @@
-/* eslint-disable no-unused-vars */
+import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
+import * as ProductService from "../../services/ProductServices";
+import { useSelector } from "react-redux";
+import { useDebounce } from "../../hooks/useDebounce";
+import { Loading } from "../../components/LoadingComponent/Loading";
 import { SliderComponent } from "../../components/SliderComponent/SliderComponent";
 import { TypeProduct } from "../../components/TypeProduct/TypeProduct";
+import { CardComponent } from "../../components/CardComponent/CardComponent";
+import { ButtonComponent } from "../../components/ButtonComponent/ButtonComponent";
 import Slider1 from "../../assets/images/slide1.webp";
 import Slider2 from "../../assets/images/slide2.webp";
 import Slider3 from "../../assets/images/slide3.webp";
 import Slider4 from "../../assets/images/slide4.webp";
 import Slider5 from "../../assets/images/slide5.webp";
 import Slider6 from "../../assets/images/slide6.webp";
-import { CardComponent } from "../../components/CardComponent/CardComponent";
-import { ButtonComponent } from "../../components/ButtonComponent/ButtonComponent";
-import { useQuery } from "react-query";
-import * as ProductService from "../../services/ProductServices";
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { Loading } from "../../components/LoadingComponent/Loading";
-import { useDebounce } from "../../hooks/useDebounce";
 
 export const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
   const searchDebounce = useDebounce(searchProduct, 500);
   const [isLoadingSearch, setLoadingSearch] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false); // Thêm state loading cho nút "Xem thêm"
   const [limit, setLimit] = useState(12);
   const [typeProducts, setTypeProducts] = useState([]);
 
@@ -44,6 +44,7 @@ export const HomePage = () => {
       retry: 3,
       retryDelay: 500,
       keepPreviousData: true,
+      onSettled: () => setIsLoadingMore(false), // Tắt loading sau khi query kết thúc
     }
   );
 
@@ -53,9 +54,14 @@ export const HomePage = () => {
     setLoadingSearch(false);
   }, [searchDebounce]);
 
+  const handleLoadMore = () => {
+    setIsLoadingMore(true); // Bật trạng thái loading
+    setLimit((prev) => prev + 6); // Tăng limit
+  };
+
   return (
     <div>
-      <Loading isLoading={isLoadingSearch || isLoading}>
+      
         <div className="container-2xl shadow bg-white">
           <div className="container mx-auto flex flex-wrap items-center h-auto px-2">
             {typeProducts.map((item) => (
@@ -68,7 +74,8 @@ export const HomePage = () => {
             <SliderComponent
               arrImages={[Slider1, Slider2, Slider3, Slider4, Slider5, Slider6]}
             />
-            <div className="p-2 mt-10 flex max-md:justify-center max-md:items-center md:gap-7 flex-wrap">
+            <Loading isLoading={isLoadingSearch || isLoading}>
+            <div className="p-2 mt-10 flex max-md:justify-center max-md:items-center md:gap-7 flex-wrap min-h-screen">
               {products?.data.map((product) => (
                 <div
                   className="flex justify-center items-center"
@@ -89,27 +96,25 @@ export const HomePage = () => {
                 </div>
               ))}
             </div>
-
+            </Loading>
             <div className="flex justify-center items-center mt-4">
               <ButtonComponent
                 textButton="Xem thêm"
                 size="large"
                 type="primary"
                 className="rounded mb-5"
+                loading={isLoadingMore} // Hiển thị trạng thái loading
                 disabled={
+                  isLoadingMore ||
                   products?.total === products?.data?.length ||
                   products?.totalPage === 1
                 }
-                onClick={() =>
-                  setLimit((prev) => {
-                    return prev + 5; // Thêm dấu return
-                  })
-                }
+                onClick={handleLoadMore}
               />
             </div>
           </div>
         </div>
-      </Loading>
+      
     </div>
   );
 };
