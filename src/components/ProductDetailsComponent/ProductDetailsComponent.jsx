@@ -149,6 +149,7 @@ export const ProductDetailsComponent = ({ idProduct }) => {
         });
         return;
       }
+      console.log('order success', order?.isSuccess)
       if (order?.isSuccess) {
         notification.open({
           message: "Thêm vào giỏ hàng thành công",
