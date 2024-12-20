@@ -78,6 +78,7 @@ export const ProductDetailsComponent = ({ idProduct }) => {
       setIsLoadingReviews(true);
       const query = { product_id: idProduct, page, limit, sort }; // Truyền tham số sort vào query
       const res = await ReviewServices.getReviews(user.accessToken, query);
+      // console.log('res', res);
       setReviews(res.data);
       setTotalReviews(res.total);
       setCurrentPage(page);
@@ -149,7 +150,7 @@ export const ProductDetailsComponent = ({ idProduct }) => {
         });
         return;
       }
-      console.log('order success', order?.isSuccess)
+      console.log("order success", order?.isSuccess);
       if (order?.isSuccess) {
         notification.open({
           message: "Thêm vào giỏ hàng thành công",
@@ -418,13 +419,24 @@ export const ProductDetailsComponent = ({ idProduct }) => {
                     <span className="text-lg font-bold">Giao đến: </span>
                     <span className="text-lg">
                       <i>
-                        {user?.address +
-                          ", " +
-                          user?.commune +
-                          ", " +
-                          user?.district +
-                          ", " +
-                          user?.city}
+                        {/* Kiểm tra điều kiện để hiển thị thông báo phù hợp */}
+                        {user?.address ||
+                        user?.commune ||
+                        user?.district ||
+                        user?.city ? (
+                          // Kiểm tra xem nếu tất cả các phần đều có thông tin thì hiển thị địa chỉ
+                          user?.address &&
+                          (user?.commune || user?.district || user?.city) ? (
+                            user?.address +
+                            (user?.commune ? ", " + user?.commune : "") +
+                            (user?.district ? ", " + user?.district : "") +
+                            (user?.city ? ", " + user?.city : "")
+                          ) : (
+                            <span>Địa chỉ chưa đầy đủ</span>
+                          )
+                        ) : (
+                          <span>Chưa có địa chỉ</span>
+                        )}
                       </i>
                     </span>
                     <span className="text-blue-400 cursor-pointer">
@@ -435,6 +447,7 @@ export const ProductDetailsComponent = ({ idProduct }) => {
                       </b>
                     </span>
                   </div>
+
                   <div className="p-5 mt-2 border-t">
                     <p className="text-lg">Số Lượng</p>
                     <div className="mt-2 flex items-center gap-2">
@@ -559,7 +572,7 @@ export const ProductDetailsComponent = ({ idProduct }) => {
                 ) : reviews.length > 0 ? (
                   reviews.map((review) => (
                     <div
-                      key={review._id}
+                      key={review}
                       className="mt-5 p-3 border rounded-md text-sm md:text-base"
                     >
                       <div className="flex items-center gap-3">
@@ -572,6 +585,7 @@ export const ProductDetailsComponent = ({ idProduct }) => {
                           className="rounded-full"
                           preview={false}
                         />
+                        {console.log('review', review)}
                         <span className="font-bold">{review.user_id.name}</span>
                       </div>
                       <Rate

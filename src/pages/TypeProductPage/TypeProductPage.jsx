@@ -103,62 +103,75 @@ export const TypeProductPage = () => {
             <Col xs={24} md={4} className="bg-[#fff] rounded h-max p-3 mb-5">
               <NavBarComponent onFilterChange={handleFilterChange} />
             </Col>
-            <Col xs={24} md={4}>
-              <div className="px-3 rounded flex items-center justify-center flex-wrap gap-3 mb-5">
+            <Col xs={24} md={20}>
+              <div className="px-3 rounded mb-5">
+                {/* Điều chỉnh flex để canh giữa Empty khi không có sản phẩm */}
                 {products?.filter((product) => {
-                    if (searchDebounce === "") {
-                      return product;
-                    } else if (
-                      product?.name.toLowerCase().includes(searchDebounce.toLowerCase())
-                    ) {
-                      return product;
-                    }
-                  }).length === 0 ? (
-                  <Empty  description="Không có sản phẩm nào được tìm thấy" />
+                  if (searchDebounce === "") {
+                    return product;
+                  } else if (
+                    product?.name.toLowerCase().includes(searchDebounce.toLowerCase())
+                  ) {
+                    return product;
+                  }
+                }).length === 0 ? (
+                  <div className="flex justify-center items-center h-full">
+                    <Empty description="Không có sản phẩm nào được tìm thấy" />
+                  </div>
                 ) : (
-                  products
-                    ?.filter((product) => {
-                      if (searchDebounce === "") {
-                        return product;
-                      } else if (
-                        product?.name.toLowerCase().includes(searchDebounce.toLowerCase())
-                      ) {
-                        return product;
-                      }
-                    })
-                    .map((product) => {
-                      return (
-                        <CardComponent
-                          key={product._id}
-                          countInStock={product.countInStock}
-                          description={product.description}
-                          image={product.image}
-                          name={product.name}
-                          price={product.price}
-                          rating={product.rating}
-                          type={product.type}
-                          selled={product.selled}
-                          discount={product.discount}
-                          id={product._id}
-                        />
-                      );
-                    })
+                  <div>
+                    {products
+                      ?.filter((product) => {
+                        if (searchDebounce === "") {
+                          return product;
+                        } else if (
+                          product?.name
+                            .toLowerCase()
+                            .includes(searchDebounce.toLowerCase())
+                        ) {
+                          return product;
+                        }
+                      })
+                      .map((product) => {
+                        return (
+                          <CardComponent
+                            key={product._id}
+                            countInStock={product.countInStock}
+                            description={product.description}
+                            image={product.image}
+                            name={product.name}
+                            price={product.price}
+                            rating={product.rating}
+                            type={product.type}
+                            selled={product.selled}
+                            discount={product.discount}
+                            id={product._id}
+                          />
+                        );
+                      })
+                    }
+                  </div>
                 )}
               </div>
-              <Pagination
-                className="flex items-center justify-center"
-                defaultCurrent={1}
-                current={paginate.page + 1}
-                total={paginate.total}
-                pageSize={paginate.limit}
-                showSizeChanger
-                onChange={onChange}
-                onShowSizeChange={onChange}
-              />
+  
+              {/* Canh giữa Pagination */}
+              <div className="flex justify-center w-full">
+                <Pagination
+                  className="flex items-center"
+                  defaultCurrent={1}
+                  current={paginate.page + 1}
+                  total={paginate.total}
+                  pageSize={paginate.limit}
+                  showSizeChanger
+                  onChange={onChange}
+                  onShowSizeChange={onChange}
+                />
+              </div>
             </Col>
           </Row>
         </div>
       </div>
     </Loading>
   );
+  
 };

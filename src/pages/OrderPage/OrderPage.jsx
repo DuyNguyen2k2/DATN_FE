@@ -213,9 +213,41 @@ export const OrderPage = ({ count = 1 }) => {
         placement: "topRight",
       });
     } else {
+      // Kiểm tra sản phẩm vượt quá số lượng tồn kho
+      console.log('order', order?.orderItemSelected)
+      const exceededProducts = order?.orderItemSelected.filter(
+        (item) => item.amount > item.countInStock
+      );
+  
+      if (exceededProducts.length > 0) {
+        const productDetails = exceededProducts
+          .map(
+            (product) =>
+              `- ${product.name}: số lượng ${product.amount}, tồn kho ${product.countInStock}`
+          )
+          .join("\n");
+  
+        notification.warning({
+          message: "Có sản phẩm vượt quá số lượng tồn kho",
+          description: (
+            <div>
+              <p>Vui lòng kiểm tra lại:</p>
+              <pre style={{ whiteSpace: "pre-wrap" }}>{productDetails}</pre>
+            </div>
+          ),
+          placement: "topRight",
+        });
+  
+        // Dừng tại đây, không cho phép tiếp tục
+        return;
+      }
+  
+      // Chuyển hướng sang trang thanh toán
       navigate("/payment");
     }
   };
+  
+  
 
   const changAddress = () => {
     navigate("/user-profile");

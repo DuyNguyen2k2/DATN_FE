@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import * as ProductService from "../../services/ProductServices";
@@ -14,6 +15,7 @@ import Slider3 from "../../assets/images/slide3.webp";
 import Slider4 from "../../assets/images/slide4.webp";
 import Slider5 from "../../assets/images/slide5.webp";
 import Slider6 from "../../assets/images/slide6.webp";
+import { Empty } from "antd";
 
 export const HomePage = () => {
   const searchProduct = useSelector((state) => state?.product?.search);
@@ -61,60 +63,73 @@ export const HomePage = () => {
 
   return (
     <div>
-      
-        <div className="container-2xl shadow bg-white">
-          <div className="container mx-auto flex flex-wrap items-center h-auto px-2">
-            {typeProducts.map((item) => (
-              <TypeProduct name={item} key={item} />
-            ))}
-          </div>
+      <div className="container-2xl shadow bg-white">
+        <div className="container mx-auto flex flex-wrap items-center h-auto px-2">
+          {typeProducts.map((item) => (
+            <TypeProduct name={item} key={item} />
+          ))}
         </div>
-        <div className="bg-[#efefef]">
-          <div className="container mx-auto">
-            <SliderComponent
-              arrImages={[Slider1, Slider2, Slider3, Slider4, Slider5, Slider6]}
-            />
-            <Loading isLoading={isLoadingSearch || isLoading}>
-            <div className="p-2 mt-10 flex max-md:justify-center max-md:items-center md:gap-7 flex-wrap min-h-screen">
-              {products?.data.map((product) => (
-                <div
-                  className="flex justify-center items-center"
-                  key={product._id}
-                >
-                  <CardComponent
-                    countInStock={product.countInStock}
-                    description={product.description}
-                    image={product.image}
-                    name={product.name}
-                    price={product.price}
-                    rating={product.rating}
-                    type={product.type}
-                    selled={product.selled}
-                    discount={product.discount}
-                    id={product._id}
+      </div>
+      <div className="bg-[#efefef]">
+        <div className="container mx-auto">
+          <SliderComponent
+            arrImages={[Slider1, Slider2, Slider3, Slider4, Slider5, Slider6]}
+          />
+          <Loading isLoading={isLoadingSearch || isLoading}>
+            <div className="mt-10 min-h-screen">
+              { products?.data.length > 0 ? (
+                <div className="p-2 flex max-md:justify-center max-md:items-center md:gap-7 flex-wrap">
+                {products.data.map((product) => (
+                  <div
+                    className="flex justify-center items-center"
+                    key={product._id}
+                  >
+                    <CardComponent
+                      countInStock={product.countInStock}
+                      description={product.description}
+                      image={product.image}
+                      name={product.name}
+                      price={product.price}
+                      rating={product.rating}
+                      type={product.type}
+                      selled={product.selled}
+                      discount={product.discount}
+                      id={product._id}
+                    />
+                  </div>
+                ))}
+                </div>
+              ) : (
+                <div className="flex justify-center items-center w-full">
+                  <Empty
+                    description={
+                      <span>
+                        Không tìm thấy sản phẩm nào là{" "}
+                        <strong>"{searchDebounce}"</strong>.
+                      </span>
+                    }
                   />
                 </div>
-              ))}
-            </div>
-            </Loading>
-            <div className="flex justify-center items-center mt-4">
-              <ButtonComponent
-                textButton="Xem thêm"
-                size="large"
-                type="primary"
-                className="rounded mb-5"
-                loading={isLoadingMore} // Hiển thị trạng thái loading
-                disabled={
-                  isLoadingMore ||
-                  products?.total === products?.data?.length ||
-                  products?.totalPage === 1
-                }
-                onClick={handleLoadMore}
-              />
-            </div>
+              )}
+              </div>
+          </Loading>
+          <div className="flex justify-center items-center mt-4">
+            <ButtonComponent
+              textButton="Xem thêm"
+              size="large"
+              type="primary"
+              className="rounded mb-5"
+              loading={isLoadingMore} // Hiển thị trạng thái loading
+              disabled={
+                isLoadingMore ||
+                products?.total === products?.data?.length ||
+                products?.totalPage === 1
+              }
+              onClick={handleLoadMore}
+            />
           </div>
         </div>
-      
+      </div>
     </div>
   );
 };

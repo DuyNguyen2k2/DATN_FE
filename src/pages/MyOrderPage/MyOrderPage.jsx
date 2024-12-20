@@ -4,7 +4,7 @@ import { Breadcrumb, Button, Modal, notification, Row } from "antd";
 import { HomeOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { convertPrice } from "../../utils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Loading } from "../../components/LoadingComponent/Loading";
 import * as OrderServives from "../../services/OrderServices";
@@ -29,11 +29,11 @@ export const MyOrderPage = () => {
     try {
       const res = await OrderServives.getAllOrderDetails(token, userId);
       return res.data
-      .map((order) => ({
-        ...order,
-        createdAt: new Date(order.createdAt), // Parse thành Date object
-      }))
-      .sort((a, b) => b.createdAt - a.createdAt); // Sắp xếp tại đây
+        .map((order) => ({
+          ...order,
+          createdAt: new Date(order.createdAt), // Parse thành Date object
+        }))
+        .sort((a, b) => b.createdAt - a.createdAt); // Sắp xếp tại đây
     } catch (error) {
       console.error("Error fetching order details:", error);
       throw new Error("Failed to fetch order details");
@@ -68,7 +68,7 @@ export const MyOrderPage = () => {
   // });
 
   const { isLoading, data, isError, error } = queryOrders;
-  console.log('queryOrders', queryOrders)
+  console.log("queryOrders", queryOrders);
   // console.log("data", data);
   // Tính tổng tiền của các đơn hàng
   const totalAmount =
@@ -171,6 +171,30 @@ export const MyOrderPage = () => {
     });
   };
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null); // Lưu đơn hàng được chọn
+
+  // Hiển thị modal xác nhận hủy đơn
+  const showCancelConfirmModal = (order) => {
+    setSelectedOrder(order);
+    setIsModalVisible(true);
+  };
+
+  // Đóng modal
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+    setSelectedOrder(null);
+  };
+
+  // Xác nhận hủy đơn
+  const handleModalOk = () => {
+    if (selectedOrder) {
+      handleCancelOrders(selectedOrder); // Gọi hàm hủy đơn hàng
+    }
+    setIsModalVisible(false);
+    setSelectedOrder(null);
+  };
+
   return (
     <Loading isLoading={isLoading || isLoadingCancel}>
       <div className="container-2xl bg-[#fff8f8] min-h-[100vh]">
@@ -210,7 +234,11 @@ export const MyOrderPage = () => {
                     <p className="text-gray-600 text-sm sm:text-base">
                       <span>
                         Giao hàng:{" "}
-                        <strong className="text-red-500">{order?.isDelivered ? "Đã giao hàng" : "Chưa giao hàng"}</strong>
+                        <strong className="text-red-500">
+                          {order?.isDelivered
+                            ? "Đã giao hàng"
+                            : "Chưa giao hàng"}
+                        </strong>
                       </span>
                     </p>
                     <p className="text-gray-600 text-sm sm:text-base">
@@ -236,14 +264,30 @@ export const MyOrderPage = () => {
                         Xem Chi Tiết
                       </button>
                       {!order?.isDelivered && (
-                      <button
-                        className="bg-red-600 text-white text-xs sm:text-base py-2 px-3 sm:px-4 rounded-md hover:bg-red-500 transition"
-                        onClick={() => handleCancelOrders(order)}
-                      >
-                        Hủy Đơn Hàng
-                      </button>
-                    )}
+                        <button
+                          className="bg-red-600 text-white text-xs sm:text-base py-2 px-3 sm:px-4 rounded-md hover:bg-red-500 transition"
+                          onClick={() => showCancelConfirmModal(order)}
+                        >
+                          Hủy Đơn Hàng
+                        </button>
+                      )}
                     </div>
+                    {/* Modal xác nhận */}
+                    <Modal
+                      title="Xác nhận hủy đơn hàng"
+                      open={isModalVisible}
+                      onOk={handleModalOk}
+                      onCancel={handleModalCancel}
+                      okText="Xác nhận"
+                      cancelText="Hủy"
+                      styles={{
+                        mask: {
+                          backgroundColor: "rgba(0, 0, 0, 0.1)", // Tùy chỉnh màu và độ mờ
+                        },
+                      }}
+                    >
+                      <p>Bạn có chắc chắn muốn hủy đơn hàng này không?</p>
+                    </Modal>
                   </div>
                   <div className="flex justify-between items-center border-t pt-4 mb-4">
                     <span className="text-gray-800 text-base font-bold">

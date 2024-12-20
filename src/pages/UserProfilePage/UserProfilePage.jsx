@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import { Breadcrumb, Button, Col, Image, message, Row, Upload } from "antd";
+import { Breadcrumb, Button, Col, Image, message, notification, Row, Upload } from "antd";
 import { HomeOutlined, UploadOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { InputForm } from "../../components/InputForm/InputForm";
@@ -14,12 +14,21 @@ import { Loading } from "../../components/LoadingComponent/Loading";
 import { getBase64 } from "../../utils";
 
 export const UserProfilePage = () => {
-  const mutation = useMutationHooks((data) => {
-    const { id, access_token, ...rests } = data;
-    const res = UserService.updateUser(id, access_token, rests);
-    return res;
-  });
+  const mutation = useMutationHooks(
+    (data) => {
+      const { id, access_token, ...rests } = data;
+      const res = UserService.updateUser(id, access_token, rests);
+      return res;
+    }
+  );
+  // const mutation = useMutationHooks(
+  //   (data) => {
+  //     const { id, access_token, ...rests } = data;
+  //     return UserService.updateUser(id, access_token, rests);
+  //   }
+  // );
   const { isLoading, data } = mutation;
+  // console.log("data", data);
   const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -47,12 +56,12 @@ export const UserProfilePage = () => {
       handleGetOneUser(user?.id, user?.access_token);
       messageApi.open({
         type: "success",
-        content: data?.message,
+        content: "Cập nhật thông tin thành công",
       });
     } else if (data?.status === "ERR") {
       messageApi.open({
         type: "error",
-        content: data?.message,
+        content: "Cập nhật thông tin không thành công",
       });
     }
   }, [data]);
@@ -105,6 +114,7 @@ export const UserProfilePage = () => {
 
   return (
     <div className="mb-[85px] p-2">
+      {contextHolder}
       <div className="container mx-auto xl:mt-[65px] mt-[20px]">
         <Breadcrumb
           className="font-semibold"
@@ -120,7 +130,7 @@ export const UserProfilePage = () => {
         />
       </div>
 
-      <Loading isLoading={false}>
+      <Loading isLoading={isLoading}>
         <div className="container mx-auto">
           <h1 className="text-xl font-bold mb-4">Thông tin người dùng</h1>
 

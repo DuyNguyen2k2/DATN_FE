@@ -67,7 +67,7 @@ export const HeaderComponent = ({
         className="p-2 cursor-pointer hover:underline"
         onClick={() => handleNavigate("profile")}
       >
-        Thông tin người dùng
+        Thông tin khách hàng
       </p>
       {user?.isAdmin && (
         <p

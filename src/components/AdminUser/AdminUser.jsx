@@ -187,12 +187,12 @@ export const AdminUser = () => {
     const { id, token } = data;
     const userDetails = await UserServices.getOneUser(id, token);
     const userName = userDetails.data.name;
-
+    console.log('data', data)
     // Check if the ID matches the one you want to protect
-    if (id === "669b2a2c4d1b9a66c1eb74f2") {
+    if (id === "675d7c9ed66e27bdc4ab70f9") {
       messageApi.open({
         type: "error",
-        content: `Không thể xóa người dùng ${userName} với ID ${id}`,
+        content: `Không thể xóa tài khoản này`,
       });
       return; // Abort the mutation
     }

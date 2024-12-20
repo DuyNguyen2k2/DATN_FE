@@ -33,7 +33,7 @@ export const SignInPage = () => {
     if (data?.status === "OK") {
       messageApi.open({
         type: "success",
-        content: data?.message,
+        content: "Đăng nhập thành công",
       });
       localStorage.setItem("access_token", JSON.stringify(data?.access_token));
       if (location?.state) {
@@ -55,7 +55,7 @@ export const SignInPage = () => {
     } else if (data?.status === "ERR") {
       messageApi.open({
         type: "error",
-        content: data?.message,
+        content: "Đăng nhập thất bại",
       });
     }
   }, [data]);
