@@ -8,13 +8,9 @@ const BE_URL = import.meta.env.VITE_API_URL;
  * @param {object} query - Query params (page, limit, product_id, user_id, etc.)
  * @returns {Promise} - API response
  */
-export const getReviews = async (access_token, query = {}) => {
+export const getReviews = async (query = {}) => {
   const queryParams = new URLSearchParams(query).toString();
-  const res = await axiosJWT.get(`${BE_URL}/review/getAll?${queryParams}`, {
-    headers: {
-      token: `Bearer ${access_token}`,
-    },
-  });
+  const res = await axiosJWT.get(`${BE_URL}/review/getAll?${queryParams}`);
   return res.data;
   // const sortedData = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 

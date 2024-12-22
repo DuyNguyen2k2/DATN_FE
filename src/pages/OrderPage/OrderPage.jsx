@@ -214,7 +214,7 @@ export const OrderPage = ({ count = 1 }) => {
       });
     } else {
       // Kiểm tra sản phẩm vượt quá số lượng tồn kho
-      console.log('order', order?.orderItemSelected)
+      // console.log('order', order?.orderItemSelected)
       const exceededProducts = order?.orderItemSelected.filter(
         (item) => item.amount > item.countInStock
       );
@@ -223,7 +223,7 @@ export const OrderPage = ({ count = 1 }) => {
         const productDetails = exceededProducts
           .map(
             (product) =>
-              `- ${product.name}: số lượng ${product.amount}, tồn kho ${product.countInStock}`
+              `- ${product.name}: số lượng ${product.amount}, số lượng hiện có ${product.countInStock}`
           )
           .join("\n");
   

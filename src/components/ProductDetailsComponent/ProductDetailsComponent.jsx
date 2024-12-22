@@ -77,7 +77,7 @@ export const ProductDetailsComponent = ({ idProduct }) => {
     try {
       setIsLoadingReviews(true);
       const query = { product_id: idProduct, page, limit, sort }; // Truyền tham số sort vào query
-      const res = await ReviewServices.getReviews(user.accessToken, query);
+      const res = await ReviewServices.getReviews(query);
       // console.log('res', res);
       setReviews(res.data);
       setTotalReviews(res.total);

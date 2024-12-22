@@ -119,7 +119,7 @@ export const TypeProductPage = () => {
                     <Empty description="Không có sản phẩm nào được tìm thấy" />
                   </div>
                 ) : (
-                  <div>
+                  <div className="flex gap-4">
                     {products
                       ?.filter((product) => {
                         if (searchDebounce === "") {
