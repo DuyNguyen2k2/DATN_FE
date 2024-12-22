@@ -491,7 +491,7 @@ export const AdminProduct = () => {
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Name",
+      title: "Tên",
       dataIndex: "name",
       key: "name",
       width: 150,
@@ -499,7 +499,7 @@ export const AdminProduct = () => {
       ...getColumnSearchProps("name"),
     },
     {
-      title: "Image",
+      title: "Ảnh",
       dataIndex: "image",
       key: "image",
       width: 150,
@@ -508,7 +508,7 @@ export const AdminProduct = () => {
       ),
     },
     {
-      title: "Type",
+      title: "Loại",
       dataIndex: "type",
       key: "type",
       width: 150,
@@ -516,7 +516,7 @@ export const AdminProduct = () => {
       ...getColumnSearchProps("type"),
     },
     {
-      title: "Price",
+      title: "Giá",
       dataIndex: "price",
       key: "price",
       width: 150,
@@ -543,7 +543,7 @@ export const AdminProduct = () => {
       },
     },
     {
-      title: "Count In Stock",
+      title: "Số lượng tồn",
       dataIndex: "countInStock",
       key: "countInStock",
       width: 200,
@@ -551,7 +551,7 @@ export const AdminProduct = () => {
       ...getColumnSearchProps("countInStock"),
     },
     {
-      title: "Rate",
+      title: "Đánh giá",
       dataIndex: "rating",
       key: "rating",
       width: 150,
@@ -582,14 +582,14 @@ export const AdminProduct = () => {
       },
     },
     {
-      title: "Description",
+      title: "Mô tả",
       dataIndex: "description",
       key: "description",
       width: 300,
       ...getColumnSearchProps("description"),
     },
     {
-      title: "Discount",
+      title: "Giảm giá",
       dataIndex: "discount",
       key: "discount",
       width: 150,
@@ -598,7 +598,7 @@ export const AdminProduct = () => {
       ...getColumnSearchProps("discount"),
     },
     {
-      title: "Selled",
+      title: "Lượt bán",
       dataIndex: "selled",
       key: "selled",
       width: 150,
@@ -606,7 +606,15 @@ export const AdminProduct = () => {
       ...getColumnSearchProps("selled"),
     },
     {
-      title: "Action",
+      title: "Số đánh giá",
+      dataIndex: "review_count",
+      key: "review_count",
+      width: 150,
+      sorter: (a, b) => a.review_count - b.review_count,
+      ...getColumnSearchProps("review_count"),
+    },
+    {
+      title: "Hành động",
       key: "action",
       fixed: "right",
       width: 120,
@@ -680,12 +688,12 @@ export const AdminProduct = () => {
               form={form}
             >
               <Form.Item
-                label="Name"
+                label="Tên"
                 name="name"
                 rules={[
                   {
                     required: true,
-                    message: "Please input name product!",
+                    message: "Vui lòng nhập tên sản phẩm",
                   },
                 ]}
               >
@@ -698,12 +706,12 @@ export const AdminProduct = () => {
               </Form.Item>
 
               <Form.Item
-                label="Type"
+                label="Loại"
                 name="type"
                 rules={[
                   {
                     required: true,
-                    message: "Please input type product!",
+                    message: "Vui lòng chọn loại sản phẩm",
                   },
                 ]}
               >
@@ -721,12 +729,12 @@ export const AdminProduct = () => {
 
               {stateProduct.type === "add_type" && (
                 <Form.Item
-                  label="New Type"
+                  label="Loại mới"
                   name="newType"
                   // rules={[
                   //   {
                   //     required: true,
-                  //     message: "Please input type product!",
+                  //     message: "Vui lòng nhâp",
                   //   },
                   // ]}
                 >
@@ -740,16 +748,16 @@ export const AdminProduct = () => {
               )}
 
               <Form.Item
-                label="Count In Stock"
+                label="Số lượng tồn"
                 name="countInStock"
                 rules={[
                   {
                     required: true,
-                    message: "Please input count in stock!",
+                    message: "Vui lòng nhập số lượng tồn",
                   },
                   {
-                    pattern: /^[0-9]+$/,
-                    message: "Count In Stock must be a number!",
+                    pattern: /^\d+$/,
+                    message: "Số lượng phải là số nguyên",
                   },
                 ]}
               >
@@ -762,16 +770,16 @@ export const AdminProduct = () => {
               </Form.Item>
 
               <Form.Item
-                label="Price"
+                label="Giá"
                 name="price"
                 rules={[
                   {
                     required: true,
-                    message: "Please input price!",
+                    message: "Vui lòng nhập giá",
                   },
                   {
                     pattern: /^(\d{1,3}(?:[.,]\d{3})*|\d+)(?:[.,]\d+)?$/,
-                    message: "Price must be a number!",
+                    message: "Giá phải là số",
                   },
                 ]}
               >
@@ -784,12 +792,12 @@ export const AdminProduct = () => {
               </Form.Item>
 
               <Form.Item
-                label="Description"
+                label="Mô tả"
                 name="description"
                 rules={[
                   {
                     required: true,
-                    message: "Please input description!",
+                    message: "Vui lòng nhập mô tả",
                   },
                 ]}
               >
@@ -802,16 +810,16 @@ export const AdminProduct = () => {
               </Form.Item>
 
               <Form.Item
-                label="Discount"
+                label="Giảm giá"
                 name="discount"
                 rules={[
                   {
                     required: true,
-                    message: "Please input discount!",
+                    message: "Vui lòng nhập giảm giá",
                   },
                   {
                     pattern: /^(\d+(\.\d*)?|\.\d+)$/,
-                    message: "Discount must be a number!",
+                    message: "Giảm giá phải là 1 số",
                   },
                 ]}
               >
@@ -824,7 +832,7 @@ export const AdminProduct = () => {
                 />
               </Form.Item>
 
-              <Form.Item label="Image" name="image">
+              <Form.Item label="Ảnh" name="image">
                 <div className="flex gap-2">
                   <div className="">
                     <Upload
@@ -931,12 +939,12 @@ export const AdminProduct = () => {
               form={form}
             >
               <Form.Item
-                label="Name"
+                label="Tên"
                 name="name"
                 rules={[
                   {
                     required: true,
-                    message: "Please input name product!",
+                    message: "Vui lòng nhập tên sản phẩm",
                   },
                 ]}
               >
@@ -949,12 +957,12 @@ export const AdminProduct = () => {
               </Form.Item>
 
               <Form.Item
-                label="Type"
+                label="Loại"
                 name="type"
                 rules={[
                   {
                     required: true,
-                    message: "Please input type product!",
+                    message: "Vui lòng nhập loại sản phẩm",
                   },
                 ]}
               >
@@ -967,16 +975,16 @@ export const AdminProduct = () => {
               </Form.Item>
 
               <Form.Item
-                label="Count In Stock"
+                label="Số lượng tồn"
                 name="countInStock"
                 rules={[
                   {
                     required: true,
-                    message: "Please input count in stock!",
+                    message: "Vui lòng nhập số lượng",
                   },
                   {
-                    pattern: /^[0-9]+$/,
-                    message: "Count In Stock must be a number!",
+                    pattern: /^\d+$/,
+                    message: "Số lượng phải là số nguyên",
                   },
                 ]}
               >
@@ -989,16 +997,16 @@ export const AdminProduct = () => {
               </Form.Item>
 
               <Form.Item
-                label="Price"
+                label="Giá"
                 name="price"
                 rules={[
                   {
                     required: true,
-                    message: "Please input price!",
+                    message: "Vui lòng nhập giá",
                   },
                   {
                     pattern: /^[0-9]+$/,
-                    message: "Price must be a number!",
+                    message: "Giá phải là số",
                   },
                 ]}
               >
@@ -1011,12 +1019,12 @@ export const AdminProduct = () => {
               </Form.Item>
 
               <Form.Item
-                label="Description"
+                label="Mô tả"
                 name="description"
                 rules={[
                   {
                     required: true,
-                    message: "Please input description!",
+                    message: "Vui lòng nhập mô tả",
                   },
                 ]}
               >
@@ -1029,16 +1037,16 @@ export const AdminProduct = () => {
               </Form.Item>
 
               <Form.Item
-                label="Discount"
+                label="Giảm giá"
                 name="discount"
                 rules={[
                   {
                     required: true,
-                    message: "Please input discount!",
+                    message: "Vui lòng nhập giảm giá",
                   },
                   {
                     pattern: /^[0-9]+$/,
-                    message: "Discount must be a number!",
+                    message: "Giảm giá phải là 1 số",
                   },
                 ]}
               >
@@ -1051,7 +1059,7 @@ export const AdminProduct = () => {
                 />
               </Form.Item>
 
-              <Form.Item label="Image" name="image">
+              <Form.Item label="Ảnh" name="image">
                 <div className="flex gap-2">
                   <div className="">
                     <Upload

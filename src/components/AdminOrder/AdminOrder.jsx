@@ -192,7 +192,7 @@ export const AdminOrder = () => {
       // sorter: (a, b) => a._id - b._id,
     },
     {
-      title: "Order Items",
+      title: "Sản phẩm",
       dataIndex: "orderItems",
       key: "orderItems",
       width: 400,
@@ -218,7 +218,7 @@ export const AdminOrder = () => {
     },
     
     {
-      title: "User Name",
+      title: "Người mua",
       dataIndex: "userName",
       key: "userName",
       width: 150,
@@ -235,7 +235,7 @@ export const AdminOrder = () => {
     //   ),
     // },
     {
-      title: "Phone Number",
+      title: "SĐT",
       dataIndex: "phone",
       key: "phone",
       width: 200,
@@ -244,14 +244,14 @@ export const AdminOrder = () => {
       ...getColumnSearchProps("phone"),
     },
     {
-      title: "Location",
+      title: "Địa chỉ",
       key: "location",
       width: 300,
       render: (text, record) => `${record.address}, ${record.commune}, ${record.district}, ${record.city}`,
       ...getColumnSearchProps("location"),
     },
     {
-      title: "Price",
+      title: "Giá ban đầu",
       dataIndex: "itemsPrice",
       key: "itemsPrice",
       width: 200,
@@ -260,7 +260,7 @@ export const AdminOrder = () => {
       ...getColumnSearchProps("itemsPrice"),
     },
     {
-      title: "Shipping Price",
+      title: "Giá vận chuyển",
       dataIndex: "shippingPrice",
       key: "shippingPrice",
       width: 200,
@@ -269,7 +269,7 @@ export const AdminOrder = () => {
       ...getColumnSearchProps("shippingPrice"),
     },
     {
-      title: "Total Price",
+      title: "Giá cuối cùng",
       dataIndex: "totalPrice",
       key: "totalPrice",
       width: 200,
@@ -278,7 +278,7 @@ export const AdminOrder = () => {
       ...getColumnSearchProps("totalPrice"),
     },
     {
-      title: "Payment Method",
+      title: "Phương thức thanh toán",
       dataIndex: "paymentMethod",
       key: "paymentMethod",
       width: 150,
@@ -287,7 +287,7 @@ export const AdminOrder = () => {
       ...getColumnSearchProps("paymentMethod"),
     },
     {
-      title: "Shipped",
+      title: "Giao hàng",
       dataIndex: "isDelivered",
       key: "isDelivered",
       width: 150,
@@ -296,7 +296,7 @@ export const AdminOrder = () => {
       ...getColumnSearchProps("isDelivered"),
     },
     {
-      title: "Paided",
+      title: "Thanh toán",
       dataIndex: "isPaid",
       key: "isPaid",
       width: 150,
@@ -304,7 +304,7 @@ export const AdminOrder = () => {
       ...getColumnSearchProps("isPaid"),
     },
     {
-      title: "Created At",
+      title: "Ngày tạo",
       dataIndex: "createdAt",
       key: "createdAt",
       width: 150,
@@ -319,7 +319,22 @@ export const AdminOrder = () => {
       ...getColumnSearchProps("createdAt"),
     },
     {
-      title: "Confirm Delivery",
+      title: "Ngày cập nhật",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      width: 150,
+      sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
+      render: (text) => {
+        const date = new Date(text);
+        return `${date.toLocaleDateString("en-GB")} ${date.toLocaleTimeString("en-GB", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`;
+      },
+      ...getColumnSearchProps("updatedAt"),
+    },
+    {
+      title: "Xác nhận giao hàng",
       key: "confirmDelivery",
       width: 200,
       fixed: "right",
@@ -359,7 +374,7 @@ export const AdminOrder = () => {
     paymentMethod: orderContant.payment[order?.paymentMethod],
     index: index + 1,
   }));
-  console.log("orders", orders)
+  // console.log("orders", orders)
   return (
     <div>
       {contextHolder}

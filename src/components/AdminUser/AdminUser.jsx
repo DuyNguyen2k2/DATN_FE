@@ -149,7 +149,7 @@ export const AdminUser = () => {
     if (dataUpdated?.status === "OK") {
       messageApi.open({
         type: "success",
-        content: dataUpdated?.message,
+        content: "Cập nhật thành công",
       });
       setTimeout(() => {
         handleCancelDrawer();
@@ -157,7 +157,7 @@ export const AdminUser = () => {
     } else if (dataUpdated?.status === "ERR") {
       messageApi.open({
         type: "error",
-        content: dataUpdated?.message,
+        content: "Cập nhật thất bại",
       });
     }
   }, [dataUpdated, messageApi]);
@@ -374,7 +374,7 @@ export const AdminUser = () => {
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Name",
+      title: "Tên",
       dataIndex: "name",
       key: "name",
       width: 150,
@@ -391,7 +391,7 @@ export const AdminUser = () => {
       ),
     },
     {
-      title: "Phone Number",
+      title: "SĐT",
       dataIndex: "phone",
       key: "phone",
       width: 200,
@@ -408,40 +408,40 @@ export const AdminUser = () => {
       ...getColumnSearchProps("email"),
     },
     {
-      title: "Address",
+      title: "Địa chỉ",
       dataIndex: "address",
       key: "address",
       width: 300,
       ...getColumnSearchProps("address"),
     },
     {
-      title: "City",
+      title: "Thành phố",
       dataIndex: "city",
       key: "city",
       width: 300,
       ...getColumnSearchProps("city"),
     },
     {
-      title: "Admin",
+      title: "Quản trị viên",
       dataIndex: "isAdmin",
       key: "isAdmin",
       width: 150,
       filters: [
         {
-          text: "Yes",
-          value: "Yes",
+          text: "Quản trị viên",
+          value: "Quản trị viên",
         },
         {
-          text: "No",
-          value: "No",
+          text: "Khách hàng",
+          value: "Khách hàng",
         },
       ],
-      // onFilter: (value, record) => {
-      //   return record.isAdmin === value;
-      // }
+      onFilter: (value, record) => {
+        return record.isAdmin === value;
+      }
     },
     {
-      title: "Action",
+      title: "Hoạt động",
       key: "action",
       fixed: "right",
       width: 120,
@@ -452,7 +452,7 @@ export const AdminUser = () => {
   const dataSource = users?.data.map((user, index) => ({
     ...user,
     key: user._id,
-    isAdmin: user.isAdmin ? "Yes" : "No",
+    isAdmin: user.isAdmin ? "Quản trị viên" : "Khách hàng",
     index: index + 1,
   }));
 
@@ -506,14 +506,8 @@ export const AdminUser = () => {
               form={form}
             >
               <Form.Item
-                label="Name"
+                label="Tên"
                 name="name"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input name User!",
-                  },
-                ]}
               >
                 <InputComponent
                   className=""
@@ -525,14 +519,8 @@ export const AdminUser = () => {
               </Form.Item>
 
               <Form.Item
-                label="Phone Number"
+                label="SĐT"
                 name="phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input phone number!",
-                  },
-                ]}
               >
                 <InputComponent
                   className=""
@@ -563,14 +551,9 @@ export const AdminUser = () => {
               </Form.Item>
 
               <Form.Item
-                label="Address"
+                label="Địa chỉ"
                 name="address"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input address!",
-                  },
-                ]}
+                
               >
                 <InputComponent
                   className=""
@@ -581,7 +564,7 @@ export const AdminUser = () => {
                 />
               </Form.Item>
               <Form.Item
-                label="City"
+                label="Thành phố"
                 name="city"
                 rules={[
                   {
@@ -600,12 +583,12 @@ export const AdminUser = () => {
               </Form.Item>
 
               <Form.Item
-                label="Admin"
+                label="Quản trị viên"
                 name="isAdmin"
                 rules={[
                   {
                     required: true,
-                    message: "Please input is admin!",
+                    message: "Vui lòng nhập quyền quản trị viên",
                   },
                 ]}
               >

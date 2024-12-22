@@ -119,7 +119,7 @@ export const TypeProductPage = () => {
                     <Empty description="Không có sản phẩm nào được tìm thấy" />
                   </div>
                 ) : (
-                  <div className="flex gap-4">
+                  <div className="md:flex gap-4">
                     {products
                       ?.filter((product) => {
                         if (searchDebounce === "") {
@@ -155,7 +155,7 @@ export const TypeProductPage = () => {
               </div>
   
               {/* Canh giữa Pagination */}
-              <div className="flex justify-center w-full">
+              <div className="flex justify-center w-full mb-5">
                 <Pagination
                   className="flex items-center"
                   defaultCurrent={1}

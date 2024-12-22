@@ -28,7 +28,7 @@ export const SignUpPage = () => {
     if (data?.status === "OK") {
       messageApi.open({
         type: "success",
-        content: data?.message,
+        content: "Đăng kí thành công",
       });
       setTimeout(() => {
         handleLogin();
@@ -36,7 +36,7 @@ export const SignUpPage = () => {
     } else if (data?.status === "ERR") {
       messageApi.open({
         type: "error",
-        content: data?.message,
+        content: "Đăng kí thất bại",
       });
     }
   }, [data]);
