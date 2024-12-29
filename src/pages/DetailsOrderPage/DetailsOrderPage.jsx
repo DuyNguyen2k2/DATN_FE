@@ -26,7 +26,7 @@ export const DetailsOrderPage = () => {
     retry: false,
     refetchOnWindowFocus: false,
   });
-
+  fetchDetailsOrder()
   const { isLoading, data } = queryDetailsOrder;
 
   const totalAmount = data?.orderItems?.reduce((total, item) => {
@@ -36,8 +36,8 @@ export const DetailsOrderPage = () => {
 
   console.log("data", data);
 
-  console.log("params", params);
-  console.log("state", state);
+  console.log("id", id);
+  console.log("token", state?.token);
   return (
     <Loading isLoading={isLoading}>
       <div className="container-2xl bg-[#fff8f8] min-h-[100vh]">
@@ -87,7 +87,7 @@ export const DetailsOrderPage = () => {
               <h3 className="font-bold text-lg mb-2">Hình thức giao hàng</h3>
               <span className="text-yellow-500 font-semibold text-xl">FAST {" "}</span>
               <span>Giao hàng tiết kiệm</span>
-              <p>Phí giao hàng: <b><i>{convertPrice(data.shippingPrice)}</i></b></p>
+              <p>Phí giao hàng: <b><i>{convertPrice(data?.shippingPrice)}</i></b></p>
             </div>
 
             {/* Hình thức thanh toán */}

@@ -11,6 +11,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   SearchOutlined,
+  CheckCircleFilled,
 } from "@ant-design/icons";
 import { convertPrice, getBase64 } from "../../utils";
 import * as OrderServices from "../../services/OrderServices";
@@ -45,13 +46,9 @@ export const AdminOrder = () => {
   const [rowSelected, setRowSelected] = useState("");
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
 
-
   const renderAction = () => {
     return (
       <div className="min-[770px]:flex gap-1">
-        <Button type="primary">
-          <EditOutlined />
-        </Button>
         <Button
           type="primary"
           danger
@@ -65,6 +62,9 @@ export const AdminOrder = () => {
 
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
+  const [isShowModalCancel, setIsShowModalCancel] = useState(false);
+  // const [rowSelected, setRowSelected] = useState(null); // Lưu thông tin đơn hàng được chọn
+  const [isCanceling, setIsCanceling] = useState(false); // Quản lý trạng thái đang hủy
   const searchInput = useRef(null);
   const handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm();
@@ -160,8 +160,12 @@ export const AdminOrder = () => {
     setIsLoadingUpdate(true);
     try {
       // Giả sử có một API để cập nhật trạng thái đơn hàng
-      const res = await OrderServices.updateOrderStatus(orderId, user?.access_token, { isPaid: true, isDelivered: true });
-      console.log('res', res)
+      const res = await OrderServices.updateOrderStatus(
+        orderId,
+        user?.access_token,
+        { isPaid: true, isDelivered: true }
+      );
+      console.log("res", res);
       if (res.status === "OK") {
         messageApi.success("Đơn hàng đã được xác nhận giao hàng.");
         // Cập nhật lại dữ liệu sau khi xác nhận giao hàng thành công
@@ -199,16 +203,35 @@ export const AdminOrder = () => {
       render: (orderItems) => (
         <ul style={{ listStyleType: "none", padding: 0 }}>
           {orderItems.map((item, index) => (
-            <li key={index} style={{ display: "flex", alignItems: "center", marginBottom: "8px" }}>
+            <li
+              key={index}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "8px",
+              }}
+            >
               <img
                 src={item.image}
                 alt={item.name}
-                style={{ width: "50px", height: "50px", marginRight: "10px", objectFit: "cover", borderRadius: "4px" }}
+                style={{
+                  width: "50px",
+                  height: "50px",
+                  marginRight: "10px",
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                }}
               />
               <div>
-                <div><strong>{item.name}</strong></div>
-                <div><i>Số lượng:</i> {item.amount}</div>
-                <div><i>Giá:</i> {convertPrice(item.price)}</div>
+                <div>
+                  <strong>{item.name}</strong>
+                </div>
+                <div>
+                  <i>Số lượng:</i> {item.amount}
+                </div>
+                <div>
+                  <i>Giá:</i> {convertPrice(item.price)}
+                </div>
               </div>
             </li>
           ))}
@@ -216,7 +239,7 @@ export const AdminOrder = () => {
       ),
       ...getColumnSearchProps("orderItems"),
     },
-    
+
     {
       title: "Người mua",
       dataIndex: "userName",
@@ -247,7 +270,8 @@ export const AdminOrder = () => {
       title: "Địa chỉ",
       key: "location",
       width: 300,
-      render: (text, record) => `${record.address}, ${record.commune}, ${record.district}, ${record.city}`,
+      render: (text, record) =>
+        `${record.address}, ${record.commune}, ${record.district}, ${record.city}`,
       ...getColumnSearchProps("location"),
     },
     {
@@ -311,10 +335,13 @@ export const AdminOrder = () => {
       sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
       render: (text) => {
         const date = new Date(text);
-        return `${date.toLocaleDateString("en-GB")} ${date.toLocaleTimeString("en-GB", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}`;
+        return `${date.toLocaleDateString("en-GB")} ${date.toLocaleTimeString(
+          "en-GB",
+          {
+            hour: "2-digit",
+            minute: "2-digit",
+          }
+        )}`;
       },
       ...getColumnSearchProps("createdAt"),
     },
@@ -326,35 +353,51 @@ export const AdminOrder = () => {
       sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
       render: (text) => {
         const date = new Date(text);
-        return `${date.toLocaleDateString("en-GB")} ${date.toLocaleTimeString("en-GB", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}`;
+        return `${date.toLocaleDateString("en-GB")} ${date.toLocaleTimeString(
+          "en-GB",
+          {
+            hour: "2-digit",
+            minute: "2-digit",
+          }
+        )}`;
       },
       ...getColumnSearchProps("updatedAt"),
     },
     {
-      title: "Xác nhận giao hàng",
-      key: "confirmDelivery",
-      width: 200,
+      title: "Action",
+      key: "action",
       fixed: "right",
-      render: (text, record) => {
-        // Chỉ hiển thị nút khi đơn hàng chưa giao (isDelivered === false)
-        return !record.isDelivered ? (
-          <Button
-            type="primary"
-            onClick={() => handleConfirmDelivery(record._id)}
-            disabled={isLoadingUpdate} // Disable khi đang cập nhật
-          >
-            Xác nhận giao hàng
-          </Button>
-        ) : (
-          "Đã giao hàng"
-        );
-      },
+      width: 150,
+      render: (text, record) => (
+        <Space>
+          {!record.isDelivered && (
+            <Button
+              type="primary"
+              danger
+              onClick={() => {
+                setRowSelected(record);
+                setIsShowModalCancel(true);
+              }}
+            >
+              <DeleteOutlined />
+            </Button>
+          )}
+          {record.isDelivered ? (
+            "Không thể hủy"
+          ) : (
+            <Button
+              type="primary"
+              onClick={() => handleConfirmDelivery(record._id)}
+              disabled={isLoadingUpdate}
+            >
+              <CheckCircleFilled />
+            </Button>
+          )}
+        </Space>
+      ),
     },
     // {
-    //   title: "Action",
+    //   title: "Hủy đơn hàng",
     //   key: "action",
     //   fixed: "right",
     //   width: 120,
@@ -387,14 +430,41 @@ export const AdminOrder = () => {
           dataTable={dataSource}
           isLoading={isLoadingOrders}
           sheet="Orders"
-          
           scroll={{
             x: 1300,
             y: 500,
           }}
         />
-        
       </div>
+      <ModalComponent
+        title="Xác nhận hủy đơn hàng"
+        open={isShowModalCancel}
+        onCancel={() => setIsShowModalCancel(false)} // Đóng modal
+        onOk={async () => {
+          setIsCanceling(true); // Bắt đầu trạng thái đang hủy
+          try {
+            const res = await OrderServices.cancelOrders(
+              user?.access_token,
+              rowSelected._id,
+              rowSelected.orderItems
+            );
+            if (res.status === "OK") {
+              messageApi.success("Đơn hàng đã được hủy thành công.");
+              setIsShowModalCancel(false); // Đóng modal
+              queryOrders.refetch(); // Cập nhật danh sách đơn hàng
+            } else {
+              messageApi.error("Không thể hủy đơn hàng.");
+            }
+          } catch (error) {
+            messageApi.error("Đã xảy ra lỗi khi hủy đơn hàng.");
+          } finally {
+            setIsCanceling(false); // Kết thúc trạng thái hủy
+          }
+        }}
+        confirmLoading={isCanceling} // Hiển thị trạng thái loading khi đang xử lý
+      >
+        Bạn có chắc chắn muốn hủy đơn hàng này không?
+      </ModalComponent>
     </div>
   );
 };
